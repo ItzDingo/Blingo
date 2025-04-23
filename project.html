@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeCart - Your One-Stop Shopping Destination</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #7e57c2;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #7e57c2;
+        }
+
+        .search-cart {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-form {
+            margin-right: 20px;
+            position: relative;
+        }
+
+        .search-form input {
+            padding: 8px 35px 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-form input:focus {
+            border-color: #7e57c2;
+            box-shadow: 0 0 5px rgba(126, 87, 194, 0.3);
+        }
+
+        .search-form button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #7e57c2;
+            color: #fff;
+            font-size: 12px;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Forms Styles */
+        .form-container {
+            background-color: #fff;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #7e57c2;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #7e57c2;
+            box-shadow: 0 0 5px rgba(126, 87, 194, 0.3);
+            outline: none;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #7e57c2;
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #6a4aa5;
+            transform: translateY(-2px);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .form-footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .form-footer a {
+            color: #7e57c2;
+            text-decoration: none;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Products Styles */
+        .products-container {
+            padding: 40px 0;
+        }
+
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #333;
+        }
+
+        .categories {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .category-btn {
+            background-color: transparent;
+            border: none;
+            margin: 0 10px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn.active {
+            background-color: #7e57c2;
+            color: #fff;
+        }
+
+        .category-btn:hover {
+            background-color: #f0e6ff;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .discount-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff5252;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .current-price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #7e57c2;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #888;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .add-to-cart {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .buy-now {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+            background-color: #43a047;
+        }
+
+        .buy-now:hover {
+            background-color: #388e3c;
+        }
+
+        /* Cart Styles */
+        .cart-container {
+            max-width: 900px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .cart-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .cart-items {
+            margin-bottom: 30px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .cart-item-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            font-size: 16px;
+            color: #7e57c2;
+            font-weight: bold;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .quantity-btn {
+            background-color: #f5f5f5;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .quantity-input {
+            width: 40px;
+            text-align: center;
+            margin: 0 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+        }
+
+        .cart-item-remove {
+            color: #ff5252;
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: 20px;
+            font-size: 14px;
+        }
+
+        .cart-summary {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 6px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-row.total {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .coupon-form {
+            display: flex;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .coupon-form input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+
+        .coupon-form button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 0 20px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .cart-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .continue-shopping {
+            background-color: transparent;
+            border: 1px solid #7e57c2;
+            color: #7e57c2;
+        }
+
+        .continue-shopping:hover {
+            background-color: #f0e6ff;
+        }
+
+        /* Checkout Styles */
+        .checkout-container {
+            max-width: 1000px;
+            margin: 50px auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .checkout-form {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .checkout-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-column {
+            flex: 1;
+        }
+
+        .checkout-summary {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            height: fit-content;
+        }
+
+        .checkout-items {
+            margin-bottom: 20px;
+        }
+
+        .checkout-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .checkout-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+
+        .checkout-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .checkout-item-details {
+            flex: 1;
+        }
+
+        .checkout-item-title {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .checkout-item-price {
+            font-size: 14px;
+            color: #7e57c2;
+        }
+
+        .checkout-item-quantity {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Success Page Styles */
+        .success-container {
+            max-width: 700px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: #43a047;
+            margin-bottom: 20px;
+        }
+
+        .success-title {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #43a047;
+        }
+
+        .success-message {
+            margin-bottom: 30px;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .order-details {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 6px;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .order-info {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-info p {
+            margin-bottom: 5px;
+        }
+
+        .order-items {
+            margin-bottom: 15px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .success-buttons {
+            margin-top: 30px;
+        }
+
+        /* Helper Classes */
+        .hidden {
+            display: none;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .search-cart {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .search-form {
+                flex: 1;
+                margin-right: 10px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page" class="page">
+        <div class="form-container fade-in">
+            <h2 class="form-title">Login to Your Account</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group" style="display: flex; align-items: center;">
+                    <input type="checkbox" id="stay-logged-in" style="width: auto; margin-right: 10px;">
+                    <label for="stay-logged-in" style="margin-bottom: 0;">Stay logged in</label>
+                </div>
+                <button type="submit" class="btn btn-block">Login</button>
+                <div class="form-footer">
+                    <p>Don't have an account? <a href="#" id="go-to-register">Register now</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Page -->
+    <div id="register-page" class="page hidden">
+        <div class="form-container fade-in">
+            <h2 class="form-title">Create an Account</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-name">Full Name</label>
+                    <input type="text" id="register-name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm-password">Confirm Password</label>
+                    <input type="password" id="register-confirm-password" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="btn btn-block">Register</button>
+                <div class="form-footer">
+                    <p>Already have an account? <a href="#" id="go-to-login">Login now</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Shop Page -->
+    <div id="shop-page" class="page hidden">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <a href="#" class="logo">
+                        <i class="fa fa-shopping-bag"></i>
+                        LuxeCart
+                    </a>
+                    <nav>
+                        <ul>
+                            <li><a href="#" class="nav-link" data-category="all">Products</a></li>
+                            <li><a href="#" class="nav-link" data-category="packs">Packs</a></li>
+                        </ul>
+                    </nav>
+                    <div class="search-cart">
+                        <form class="search-form">
+                            <input type="text" placeholder="Search products...">
+                            <button type="submit"><i class="fas fa-search"></i></button>
+                        </form>
+                        <div class="cart-icon" id="open-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="products-container fade-in">
+                <h2 class="section-title">Featured Products</h2>
+                <div class="categories">
+                    <button class="category-btn active" data-category="all">All</button>
+                    <button class="category-btn" data-category="cosmetics">Cosmetics</button>
+                    <button class="category-btn" data-category="clothing">Clothing</button>
+                    <button class="category-btn" data-category="pc-components">PC Components</button>
+                    <button class="category-btn" data-category="Electronics">Electronics</button>
+                    <button class="category-btn" data-category="Transports">Transports</button>
+
+                </div>
+                <div class="products-grid">
+                    <!-- Cosmetics Products -->
+                    <div class="product-card" data-category="cosmetics">
+                        <div class="product-image">
+                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/rolex-4807479_640.png" alt="Rolex Submariner">
+                            <span class="discount-tag">-15%</span>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">Rolex Submariner</h3>
+                            <div class="product-price">
+                                <span class="current-price">$130,050</span>
+                                <span class="original-price">$153,000</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn add-to-cart" data-id="1" data-name="Rolex Submariner" data-price="130050" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/rolex-4807479_640.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="1" data-name="Rolex Submariner" data-price="130050" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/rolex-4807479_640.png">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card" data-category="cosmetics">
+                        <div class="product-image">
+                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/783e6f_012983d54aae4996a27900867aea1b3f~mv2.png" alt="Jada Dubai x Passion Jewellers Passion Diamond Shoes">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">Jada Dubai x Passion Jewellers Passion Diamond Shoes</h3>
+                            <div class="product-price">
+                                <span class="current-price">$17,700,000</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn add-to-cart" data-id="2" data-name="Jada Dubai x Passion Jewellers Passion Diamond Shoes" data-price="17700000" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/783e6f_012983d54aae4996a27900867aea1b3f~mv2.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="2" data-name="Jada Dubai x Passion Jewellers Passion Diamond Shoes" data-price="17700000" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/783e6f_012983d54aae4996a27900867aea1b3f~mv2.png">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clothing Products -->
+                    <div class="product-card" data-category="clothing">
+                        <div class="product-image">
+                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/louis-vuitton-double-breasted-cashmere-and-wool-blend-pont-neuf-jacket--HSFJ7EKQ0706_PM2_Front%20view.png">
+                            <span class="discount-tag">-5%</span>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">Double-Breasted Cashmere And Wool Blend Pont Neuf Jacket</h3>
+                            <div class="product-price">
+                                <span class="current-price">$3,705.00</span>
+                                <span class="original-price">$3,900.00</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn add-to-cart" data-id="3" data-name="Double-Breasted Cashmere And Wool Blend Pont Neuf Jacket" data-price="370500" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/louis-vuitton-double-breasted-cashmere-and-wool-blend-pont-neuf-jacket--HSFJ7EKQ0706_PM2_Front%20view.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="3" data-name="Double-Breasted Cashmere And Wool Blend Pont Neuf Jacket" data-price="370500" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/louis-vuitton-double-breasted-cashmere-and-wool-blend-pont-neuf-jacket--HSFJ7EKQ0706_PM2_Front%20view.png">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PC Components Products -->
+                    <div class="product-card" data-category="pc-components">
+                        <div class="product-image">
+                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg" alt="Nvidia RTX 5090">
+                            <span class="discount-tag">-1%</span>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">Gaming Graphics Card RTX 5090</h3>
+                            <div class="product-price">
+                                <span class="current-price">$1,979</span>
+                                <span class="original-price">$1,999</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn add-to-cart" data-id="4" data-name="Nvidia RTX 5090" data-price="1979" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg">Add to Cart</button>
+                                <button class="btn buy-now" data-id="4" data-name="Nvidia RTX 5090" data-price="1979" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="pc-components">
+                        <div class="product-image">
+                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/rog-azoth-extreme.jpg" alt="ROG Azoth Extreme">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">ROG Azoth Extreme</h3>
+                            <div class="product-price">
+                                <span class="current-price">$500</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn add-to-cart" data-id="5" data-name="ROG Azoth Extreme" data-price="500" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/rog-azoth-extreme.jpg">Add to Cart</button>
+                                <button class="btn buy-now" data-id="5" data-name="ROG Azoth Extreme" data-price="500" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/rog-azoth-extreme.jpg">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="pc-components">
+                        <div class="product-image">
+                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/2900400-ryzen-7-9800x3d.png" alt="High-Performance SSD">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">AMD RYZEN 7 9800X3D</h3>
+                            <div class="product-price">
+                                <span class="current-price">$479</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn add-to-cart" data-id="6" data-name="AMD RYZEN 7 9800X3D" data-price="479" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/2900400-ryzen-7-9800x3d.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="6" data-name="AMD RYZEN 7 9800X3D" data-price="479" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/2900400-ryzen-7-9800x3d.png">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cars/etc -->
+                    <div class="product-card" data-category="Transports">
+                        <div class="product-image">
+                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/SILVER+EDGE_01_2015-20200821-Global-High_front_34_LR-1I70Umhy.png" alt="SILVER EDGE
+                            ">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">SILVER EDGE</h3>
+                            <div class="product-price">
+                                <span class="current-price">$75,000,000</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn add-to-cart" data-id="7" data-name="SILVER EDGE" data-price="75000000" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/SILVER+EDGE_01_2015-20200821-Global-High_front_34_LR-1I70Umhy.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="7" data-name="SILVER EDGE" data-price="75000000" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/SILVER+EDGE_01_2015-20200821-Global-High_front_34_LR-1I70Umhy.png">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="Transports">
+                        <div class="product-image">
+                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/download.jpg" alt="2001 Gulfstream IVSP Private Plane">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">2001 Gulfstream IVSP Private Plane</h3>
+                            <div class="product-price">
+                                <span class="current-price">$3,995,000</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn add-to-cart" data-id="10" data-name="2001 Gulfstream IVSP Private Plane" data-price="3995000" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/download.jpg">Add to Cart</button>
+                                <button class="btn buy-now" data-id="10" data-name="2001 Gulfstream IVSP Private Plane" data-price="3995000" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/download.jpg">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Electronics -->
+                    <div class="product-card" data-category="Electronics">
+                        <div class="product-image">
+                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/pexels-japy-29020349-copy.png" alt="iPhone 16 Pro">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">iPhone 16 Pro</h3>
+                            <div class="product-price">
+                                <span class="current-price">$999</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn add-to-cart" data-id="8" data-name="iPhone 16 Pro" data-price="999" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/pexels-japy-29020349-copy.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="8" data-name="iPhone 16 Pro" data-price="999" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/pexels-japy-29020349-copy.png">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="Electronics">
+                        <div class="product-image">
+                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/apple-vision-pro-features.jpg" alt="Apple Vision Pro">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">Apple Vision Pro</h3>
+                            <div class="product-price">
+                                <span class="current-price">$3,699</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn add-to-cart" data-id="9" data-name="Apple Vision Pro" data-price="3699" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/apple-vision-pro-features.jpg">Add to Cart</button>
+                                <button class="btn buy-now" data-id="9" data-name="Apple Vision Pro" data-price="3699" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/apple-vision-pro-features.jpg">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="Electronics">
+                        <div class="product-image">
+                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/custom_filename.png" alt="Samsung Galaxy S25 Ultra">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">Samsung Galaxy S25 Ultra</h3>
+                            <div class="product-price">
+                                <span class="current-price">$1,420</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn add-to-cart" data-id="10" data-name="Samsung Galaxy S25 Ultra" data-price="1420" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/custom_filename.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="10" data-name="Samsung Galaxy S25 Ultra" data-price="1420" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/custom_filename.png">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Packs -->
+                    <div class="product-card" data-category="packs">
+                        <div class="product-image">
+                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/level_3_bundle_22.png" alt="STGAubron Gaming PC Bundle">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">STGAubron Gaming PC Bundle</h3>
+                            <div class="product-price">
+                                <span class="current-price">$550</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn add-to-cart" data-id="11" data-name="STGAubron Gaming PC Bundle" data-price="550" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/level_3_bundle_22.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="11" data-name="STGAubron Gaming PC Bundle" data-price="550" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/level_3_bundle_22.png">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Page -->
+    <div id="cart-page" class="page hidden">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <a href="#" class="logo" id="back-to-shop-from-cart">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Shop
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="cart-container fade-in">
+                <h2 class="cart-title">Your Shopping Cart</h2>
+                <div id="cart-items" class="cart-items">
+                    <!-- Cart items will be dynamically added here -->
+                </div>
+
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="cart-subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span>$5.00</span>
+                    </div>
+                    <div class="summary-row" id="discount-row" style="display: none;">
+                        <span>Discount:</span>
+                        <span id="cart-discount">$0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="cart-total">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="coupon-form">
+                    <input type="text" id="coupon-code" placeholder="Enter coupon code">
+                    <button id="apply-coupon">Apply</button>
+                </div>
+
+                <div class="cart-buttons">
+                    <button class="btn continue-shopping" id="continue-shopping">Continue Shopping</button>
+                    <button class="btn" id="proceed-to-checkout">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Page -->
+    <div id="checkout-page" class="page hidden">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <a href="#" class="logo" id="back-to-cart">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Cart
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="checkout-container fade-in">
+                <div class="checkout-form">
+                    <h2 class="checkout-title">Shipping & Billing Information</h2>
+                    <form id="checkout-form">
+                        <div class="form-row">
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label for="checkout-firstname">First Name</label>
+                                    <input type="text" id="checkout-firstname" required>
+                                </div>
+                            </div>
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label for="checkout-lastname">Last Name</label>
+                                    <input type="text" id="checkout-lastname" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="checkout-email">Email</label>
+                            <input type="email" id="checkout-email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="checkout-address">Address</label>
+                            <input type="text" id="checkout-address" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label for="checkout-city">City</label>
+                                    <input type="text" id="checkout-city" required>
+                                </div>
+                            </div>
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label for="checkout-postal">Postal Code</label>
+                                    <input type="text" id="checkout-postal" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="checkout-country">Country</label>
+                            <input type="text" id="checkout-country" required>
+                        </div>
+                        
+                        <h2 class="checkout-title">Payment Information</h2>
+                        
+                        <div class="form-group">
+                            <label for="checkout-card-name">Name on Card</label>
+                            <input type="text" id="checkout-card-name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="checkout-card-number">Card Number</label>
+                            <input type="text" id="checkout-card-number" placeholder="1234 5678 9012 3456" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label for="checkout-card-expiry">Expiry Date</label>
+                                    <input type="text" id="checkout-card-expiry" placeholder="MM/YY" required>
+                                </div>
+                            </div>
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label for="checkout-card-cvc">CVC</label>
+                                    <input type="text" id="checkout-card-cvc" placeholder="123" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-block">Complete Purchase</button>
+                    </form>
+                </div>
+                
+                <div class="checkout-summary">
+                    <h2 class="checkout-title">Order Summary</h2>
+                    <div id="checkout-items" class="checkout-items">
+                        <!-- Checkout items will be dynamically added here -->
+                    </div>
+                    
+                    <div class="cart-summary">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span id="checkout-subtotal">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping:</span>
+                            <span>$5.00</span>
+                        </div>
+                        <div class="summary-row" id="checkout-discount-row" style="display: none;">
+                            <span>Discount:</span>
+                            <span id="checkout-discount">$0.00</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total:</span>
+                            <span id="checkout-total">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Page -->
+    <div id="success-page" class="page hidden">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <a href="#" class="logo">
+                        <i class="fas fa-shopping-bag"></i>
+                        LuxeCart
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="success-container fade-in">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 class="success-title">Order Successful!</h2>
+                <p class="success-message">Thank you for your purchase. Your order has been received and is being processed.</p>
+                
+                <div class="order-details">
+                    <div class="order-info">
+                        <p><strong>Order Number:</strong> <span id="order-number"></span></p>
+                        <p><strong>Date:</strong> <span id="order-date"></span></p>
+                        <p><strong>Email:</strong> <span id="order-email"></span></p>
+                    </div>
+                    
+                    <h3>Order Items</h3>
+                    <div id="order-items" class="order-items">
+                        <!-- Order items will be dynamically added here -->
+                    </div>
+                    
+                    <div class="cart-summary">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span id="order-subtotal">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping:</span>
+                            <span>$5.00</span>
+                        </div>
+                        <div class="summary-row" id="order-discount-row" style="display: none;">
+                            <span>Discount:</span>
+                            <span id="order-discount">$0.00</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total:</span>
+                            <span id="order-total">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="success-buttons">
+                    <button class="btn" id="back-to-shop">Continue Shopping</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let cartItems = [];
+        let discountAmount = 0;
+        let discountApplied = false;
+
+        // DOM Elements
+        const loginPage = document.getElementById('login-page');
+        const registerPage = document.getElementById('register-page');
+        const shopPage = document.getElementById('shop-page');
+        const cartPage = document.getElementById('cart-page');
+        const checkoutPage = document.getElementById('checkout-page');
+        const successPage = document.getElementById('success-page');
+
+        // Navigation Links
+        document.getElementById('go-to-register').addEventListener('click', function(e) {
+            e.preventDefault();
+            loginPage.classList.add('hidden');
+            registerPage.classList.remove('hidden');
+        });
+
+        document.getElementById('go-to-login').addEventListener('click', function(e) {
+            e.preventDefault();
+            registerPage.classList.add('hidden');
+            loginPage.classList.remove('hidden');
+        });
+
+        // Form Submissions
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // In a real application, you would validate and authenticate the user here
+            loginPage.classList.add('hidden');
+            shopPage.classList.remove('hidden');
+        });
+
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // In a real application, you would validate and create a new user account here
+            registerPage.classList.add('hidden');
+            shopPage.classList.remove('hidden');
+        });
+
+        // Product filtering
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const productCards = document.querySelectorAll('.product-card');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        function filterProducts(category) {
+            productCards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                filterProducts(this.dataset.category);
+            });
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const category = this.dataset.category;
+                categoryButtons.forEach(btn => {
+                    if (btn.dataset.category === category) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                filterProducts(category);
+            });
+        });
+
+        // Cart functionality
+        document.getElementById('open-cart').addEventListener('click', function() {
+            shopPage.classList.add('hidden');
+            cartPage.classList.remove('hidden');
+            updateCartDisplay();
+        });
+
+        document.getElementById('back-to-shop-from-cart').addEventListener('click', function(e) {
+            e.preventDefault();
+            cartPage.classList.add('hidden');
+            shopPage.classList.remove('hidden');
+        });
+
+        document.getElementById('continue-shopping').addEventListener('click', function() {
+            cartPage.classList.add('hidden');
+            shopPage.classList.remove('hidden');
+        });
+
+        // Add to cart buttons
+        const addToCartButtons = document.querySelectorAll('.add-to-cart');
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.dataset.id;
+                const productName = this.dataset.name;
+                const productPrice = parseFloat(this.dataset.price);
+                const productImg = this.dataset.img;
+                
+                addToCart(productId, productName, productPrice, productImg);
+                updateCartCount();
+                
+                // Show a brief confirmation
+                const confirmation = document.createElement('div');
+                confirmation.textContent = 'Added to cart!';
+                confirmation.style.position = 'fixed';
+                confirmation.style.top = '20px';
+                confirmation.style.left = '50%';
+                confirmation.style.transform = 'translateX(-50%)';
+                confirmation.style.background = '#43a047';
+                confirmation.style.color = 'white';
+                confirmation.style.padding = '10px 20px';
+                confirmation.style.borderRadius = '4px';
+                confirmation.style.zIndex = '1000';
+                document.body.appendChild(confirmation);
+                
+                setTimeout(() => {
+                    confirmation.remove();
+                }, 2000);
+            });
+        });
+
+        // Buy now buttons
+        const buyNowButtons = document.querySelectorAll('.buy-now');
+        buyNowButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.dataset.id;
+                const productName = this.dataset.name;
+                const productPrice = parseFloat(this.dataset.price);
+                const productImg = this.dataset.img;
+                
+                // Clear cart and add just this item
+                cartItems = [];
+                addToCart(productId, productName, productPrice, productImg);
+                updateCartCount();
+                
+                // Go directly to checkout
+                shopPage.classList.add('hidden');
+                checkoutPage.classList.remove('hidden');
+                updateCheckoutDisplay();
+            });
+        });
+
+        // Proceed to checkout
+        document.getElementById('proceed-to-checkout').addEventListener('click', function() {
+            if (cartItems.length === 0) {
+                alert('Your cart is empty. Add some products before checkout.');
+                return;
+            }
+            
+            cartPage.classList.add('hidden');
+            checkoutPage.classList.remove('hidden');
+            updateCheckoutDisplay();
+        });
+
+        document.getElementById('back-to-cart').addEventListener('click', function(e) {
+            e.preventDefault();
+            checkoutPage.classList.add('hidden');
+            cartPage.classList.remove('hidden');
+        });
+
+        // Checkout form submission
+        document.getElementById('checkout-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // In a real application, you would process the payment and create the order here
+            checkoutPage.classList.add('hidden');
+            successPage.classList.remove('hidden');
+            
+            // Set order details
+            const orderNumber = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+            const orderDate = new Date().toLocaleDateString();
+            const orderEmail = document.getElementById('checkout-email').value;
+            
+            document.getElementById('order-number').textContent = orderNumber;
+            document.getElementById('order-date').textContent = orderDate;
+            document.getElementById('order-email').textContent = orderEmail;
+            
+            updateOrderDisplay();
+        });
+
+        // Back to shop from success page
+        document.getElementById('back-to-shop').addEventListener('click', function() {
+            // Clear cart
+            cartItems = [];
+            discountAmount = 0;
+            discountApplied = false;
+            updateCartCount();
+            
+            successPage.classList.add('hidden');
+            shopPage.classList.remove('hidden');
+        });
+
+        // Apply coupon code
+        document.getElementById('apply-coupon').addEventListener('click', function() {
+            const couponCode = document.getElementById('coupon-code').value.trim().toUpperCase();
+    
+        // List of valid coupon codes
+        const validCoupons = ['DINGO', 'WELCOME', 'LUXE'];
+    
+        if (validCoupons.includes(couponCode)) {
+            let discountPercentage = 0;
+        
+            // Set discount percentage based on coupon code
+            if (couponCode === 'DINGO') discountPercentage = 1;
+            if (couponCode === 'WELCOME') discountPercentage = 0.2;
+            if (couponCode === 'LUXE') discountPercentage = 0.35;
+        
+            discountAmount = calculateSubtotal() * discountPercentage;
+            discountApplied = true;
+            document.getElementById('discount-row').style.display = 'flex';
+            document.getElementById('cart-discount').textContent = '-$' + discountAmount.toFixed(2);
+            updateCartTotals();
+        
+            // Show confirmation
+            alert(`Coupon applied successfully! ${discountPercentage*100}% discount added.`);
+        } else {
+            alert('Invalid coupon code. Please try again. Use A Valid Code Next Time!');
+        }
+        });
+
+        // Cart functions
+        function addToCart(id, name, price, img) {
+            const existingItem = cartItems.find(item => item.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cartItems.push({
+                    id: id,
+                    name: name,
+                    price: price,
+                    img: img,
+                    quantity: 1
+                });
+            }
+        }
+
+        function updateCartCount() {
+            const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+            document.querySelector('.cart-count').textContent = totalItems;
+        }
+
+        function calculateSubtotal() {
+            return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+        }
+
+        function updateCartTotals() {
+            const subtotal = calculateSubtotal();
+            const shipping = cartItems.length > 0 ? 5 : 0;
+            const total = subtotal + shipping - discountAmount;
+            
+            document.getElementById('cart-subtotal').textContent = '$' + subtotal.toFixed(2);
+            document.getElementById('cart-total').textContent = '$' + total.toFixed(2);
+        }
+
+        function updateCartDisplay() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            cartItemsContainer.innerHTML = '';
+            
+            if (cartItems.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-center">Your cart is empty.</p>';
+                document.getElementById('discount-row').style.display = 'none';
+            } else {
+                cartItems.forEach(item => {
+                    const cartItemElement = document.createElement('div');
+                    cartItemElement.className = 'cart-item';
+                    cartItemElement.innerHTML = `
+                        <div class="cart-item-image">
+                            <img src="${item.img}" alt="${item.name}">
+                        </div>
+                        <div class="cart-item-details">
+                            <h3 class="cart-item-title">${item.name}</h3>
+                            <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+                            <div class="cart-item-quantity">
+                                <button class="quantity-btn decrease-quantity" data-id="${item.id}">-</button>
+                                <input type="number" class="quantity-input" value="${item.quantity}" min="1" data-id="${item.id}" readonly>
+                                <button class="quantity-btn increase-quantity" data-id="${item.id}">+</button>
+                            </div>
+                        </div>
+                        <button class="cart-item-remove" data-id="${item.id}">Remove</button>
+                    `;
+                    cartItemsContainer.appendChild(cartItemElement);
+                });
+                
+                // Add event listeners for quantity buttons
+                document.querySelectorAll('.decrease-quantity').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        const item = cartItems.find(item => item.id === id);
+                        if (item.quantity > 1) {
+                            item.quantity -= 1;
+                        } else {
+                            cartItems = cartItems.filter(item => item.id !== id);
+                        }
+                        updateCartDisplay();
+                        updateCartCount();
+                    });
+                });
+                
+                document.querySelectorAll('.increase-quantity').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        const item = cartItems.find(item => item.id === id);
+                        item.quantity += 1;
+                        updateCartDisplay();
+                        updateCartCount();
+                    });
+                });
+                
+                document.querySelectorAll('.cart-item-remove').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        cartItems = cartItems.filter(item => item.id !== id);
+                        updateCartDisplay();
+                        updateCartCount();
+                    });
+                });
+                
+                // Show discount row if discount is applied
+                if (discountApplied) {
+                    document.getElementById('discount-row').style.display = 'flex';
+                    document.getElementById('cart-discount').textContent = '-$' + discountAmount.toFixed(2);
+                }
+            }
+            
+            updateCartTotals();
+        }
+
+        function updateCheckoutDisplay() {
+            const checkoutItemsContainer = document.getElementById('checkout-items');
+            checkoutItemsContainer.innerHTML = '';
+            
+            cartItems.forEach(item => {
+                const checkoutItemElement = document.createElement('div');
+                checkoutItemElement.className = 'checkout-item';
+                checkoutItemElement.innerHTML = `
+                    <div class="checkout-item-image">
+                        <img src="${item.img}" alt="${item.name}">
+                    </div>
+                    <div class="checkout-item-details">
+                        <h3 class="checkout-item-title">${item.name}</h3>
+                        <div class="checkout-item-price">$${item.price.toFixed(2)}</div>
+                        <div class="checkout-item-quantity">Qty: ${item.quantity}</div>
+                    </div>
+                `;
+                checkoutItemsContainer.appendChild(checkoutItemElement);
+            });
+            
+            const subtotal = calculateSubtotal();
+            const shipping = cartItems.length > 0 ? 5 : 0;
+            const total = subtotal + shipping - discountAmount;
+            
+            document.getElementById('checkout-subtotal').textContent = '$' + subtotal.toFixed(2);
+            document.getElementById('checkout-total').textContent = '$' + total.toFixed(2);
+            
+            // Show discount row if discount is applied
+            if (discountApplied) {
+                document.getElementById('checkout-discount-row').style.display = 'flex';
+                document.getElementById('checkout-discount').textContent = '-$' + discountAmount.toFixed(2);
+            } else {
+                document.getElementById('checkout-discount-row').style.display = 'none';
+            }
+        }
+
+        function updateOrderDisplay() {
+            const orderItemsContainer = document.getElementById('order-items');
+            orderItemsContainer.innerHTML = '';
+            
+            cartItems.forEach(item => {
+                const orderItemElement = document.createElement('div');
+                orderItemElement.className = 'order-item';
+                orderItemElement.innerHTML = `
+                    <span>${item.name} x${item.quantity}</span>
+                    <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                `;
+                orderItemsContainer.appendChild(orderItemElement);
+            });
+            
+            const subtotal = calculateSubtotal();
+            const shipping = 5;
+            const total = subtotal + shipping - discountAmount;
+            
+            document.getElementById('order-subtotal').textContent = '$' + subtotal.toFixed(2);
+            document.getElementById('order-total').textContent = '$' + total.toFixed(2);
+            
+            // Show discount row if discount is applied
+            if (discountApplied) {
+                document.getElementById('order-discount-row').style.display = 'flex';
+                document.getElementById('order-discount').textContent = '-$' + discountAmount.toFixed(2);
+            } else {
+                document.getElementById('order-discount-row').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
