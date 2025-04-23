@@ -53,10 +53,6 @@
             font-size: 28px;
         }
 
-        nav {
-            margin: 0 auto; /* This centers the nav */
-        }
-
         nav ul {
             display: flex;
             list-style: none;
@@ -678,8 +674,7 @@
 
         /* Logout Button Styles */
         .user-controls {
-            margin-left: 10px; /* Changed from 20px to 10px */
-            margin-right: 10px; /* Add this to balance spacing */
+            margin-left: 20px;
         }
 
         .btn-logout {
@@ -831,10 +826,6 @@
                 <h3>Registration Disabled</h3>
                 <p>This feature is currently in beta testing</p>
                 <p>Please use the provided credentials to login</p>
-                <button class="btn" id="back-to-login-from-register" style="margin-top: 15px;">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Back to Login
-                </button>
             </div>
             <h2 class="form-title">Create an Account</h2>
             <form id="register-form">
@@ -867,35 +858,36 @@
         <header>
             <div class="container">
                 <div class="header-content">
-    <a href="#" class="logo" id="blingo-logo">
-        <i class="fa fa-shopping-bag"></i>
-        Blingo
-    </a>
-    
-    <nav style="margin: 0 auto;"> <!-- Add this style -->
-        <ul>
-            <li><a href="#" class="nav-link" data-category="all">Products</a></li>
-            <li><a href="#" class="nav-link" data-category="packs">Packs</a></li>
-        </ul>
-    </nav>
-    
-    <div class="search-cart">
-        <form class="search-form" id="search-form">
-            <input type="text" id="search-input" placeholder="Search products...">
-            <button type="button" id="search-button"><i class="fas fa-search"></i></button>
-        </form>
-        <div class="user-controls">
-            <button id="logout-btn" class="btn-logout hidden">
-                <i class="fas fa-sign-out-alt"></i>
-                <span class="logout-text">Logout</span>
-            </button>
-        </div>
-        <div class="cart-icon" id="open-cart">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="cart-count">0</span>
-        </div>
-    </div>
-</div>
+                    <a href="#" class="logo">
+                        <i class="fa fa-shopping-bag"></i>
+                        Blingo
+                    </a>
+                    <div id="user-greeting" class="user-greeting hidden">
+                        Hello, <span id="username-display"></span>
+                    </div>
+                    <nav>
+                        <ul>
+                            <li><a href="#" class="nav-link" data-category="all">Products</a></li>
+                            <li><a href="#" class="nav-link" data-category="packs">Packs</a></li>
+                        </ul>
+                    </nav>
+                    <div class="search-cart">
+                        <form class="search-form" id="search-form">
+                            <input type="text" id="search-input" placeholder="Search products...">
+                            <button type="button" id="search-button"><i class="fas fa-search"></i></button>
+                        </form>
+                        <div class="user-controls">
+                            <button id="logout-btn" class="btn-logout hidden">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span class="logout-text">Logout</span>
+                            </button>
+                        </div>
+                        <div class="cart-icon" id="open-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count">0</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -1360,7 +1352,7 @@
 
         // User authentication
         const validUsers = [
-            { email: "dingothegoat@example.com", username: "admin_dingothegoat", password: "yourmamaissexy" }
+            { email: "admin@example.com", username: "admin", password: "admin123" }
         ];
         let currentUser = null;
 
@@ -1519,26 +1511,9 @@
             shopPage.classList.remove('hidden');
         });
 
-        document.getElementById('back-to-login-from-register').addEventListener('click', function(e) {
-            e.preventDefault();
-            registerPage.classList.add('hidden');
-            loginPage.classList.remove('hidden');
-        });
-
         document.getElementById('continue-shopping').addEventListener('click', function() {
             cartPage.classList.add('hidden');
             shopPage.classList.remove('hidden');
-        });
-
-        document.getElementById('blingo-logo').addEventListener('click', function(e) {
-            e.preventDefault();
-            // Reset category filter to 'all'
-            categoryButtons.forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.category-btn[data-category="all"]').classList.add('active');
-            filterProducts('all');
-    
-            // Reset search
-            document.getElementById('search-input').value = '';
         });
 
         // Add to cart buttons
