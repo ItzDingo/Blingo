@@ -1532,9 +1532,18 @@
         });
 
 
+document.getElementById('blingo-logo').addEventListener('click', function(e) {
+    e.preventDefault();
+    // Reset category filter to 'all'
+    categoryButtons.forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.category-btn[data-category="all"]').classList.add('active');
+    filterProducts('all');
+    
+    // Reset search
+    document.getElementById('search-input').value = '';
+});
 
-
-
+        
         document.getElementById('back-to-login-from-register').addEventListener('click', function(e) {
     e.preventDefault();
     registerPage.classList.add('hidden');
