@@ -135,6 +135,8 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
         }
 
         .form-title {
@@ -180,6 +182,7 @@
             transition: all 0.3s ease;
             text-decoration: none;
             text-align: center;
+            position: relative;
         }
 
         .btn:hover {
@@ -669,6 +672,84 @@
             animation: fadeIn 0.5s ease forwards;
         }
 
+        /* Logout Button Styles */
+        .user-controls {
+            margin-left: 20px;
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid #7e57c2;
+            color: #7e57c2;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            max-width: 40px;
+        }
+
+        .btn-logout:hover {
+            background-color: #f0e6ff;
+            max-width: 120px;
+        }
+
+        .btn-logout i {
+            margin-right: 8px;
+        }
+
+        .logout-text {
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease 0.1s;
+        }
+
+        .btn-logout:hover .logout-text {
+            opacity: 1;
+        }
+
+        .user-greeting {
+            margin-right: auto;
+            margin-left: 20px;
+            font-weight: 500;
+            color: #7e57c2;
+        }
+
+        .beta-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #ff5252;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            transform: rotate(15deg);
+        }
+
+        .register-disabled {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border-radius: 8px;
+        }
+
+        .register-disabled h3 {
+            color: #ff5252;
+            margin-bottom: 10px;
+        }
+
         /* Responsive Styles */
         @media (max-width: 768px) {
             .products-grid {
@@ -715,18 +796,22 @@
             <h2 class="form-title">Login to Your Account</h2>
             <form id="login-form">
                 <div class="form-group">
-                    <label for="login-email">Email</label>
-                    <input type="email" id="login-email" placeholder="Enter your email" required>
+                    <label for="login-email">Email or Username</label>
+                    <input type="text" id="login-email" placeholder="Enter your email or username" required>
                 </div>
                 <div class="form-group">
                     <label for="login-password">Password</label>
                     <input type="password" id="login-password" placeholder="Enter your password" required>
                 </div>
                 <div class="form-group" style="display: flex; align-items: center;">
-                    <input type="checkbox" id="stay-logged-in" style="width: auto; margin-right: 10px;">
+                    <input type="checkbox" id="stay-logged-in" style="width: auto; margin-right: 10px;" checked>
                     <label for="stay-logged-in" style="margin-bottom: 0;">Stay logged in</label>
                 </div>
-                <button type="submit" class="btn btn-block">Login</button>
+                <div id="login-error" class="error-message" style="color: red; margin-bottom: 15px;"></div>
+                <button type="submit" class="btn btn-block">
+                    Login
+                    <span class="beta-badge">BETA</span>
+                </button>
                 <div class="form-footer">
                     <p>Don't have an account? <a href="#" id="go-to-register">Register now</a></p>
                 </div>
@@ -737,25 +822,30 @@
     <!-- Register Page -->
     <div id="register-page" class="page hidden">
         <div class="form-container fade-in">
+            <div class="register-disabled">
+                <h3>Registration Disabled</h3>
+                <p>This feature is currently in beta testing</p>
+                <p>Please use the provided credentials to login</p>
+            </div>
             <h2 class="form-title">Create an Account</h2>
             <form id="register-form">
                 <div class="form-group">
                     <label for="register-name">Full Name</label>
-                    <input type="text" id="register-name" placeholder="Enter your full name" required>
+                    <input type="text" id="register-name" placeholder="Enter your full name" required disabled>
                 </div>
                 <div class="form-group">
                     <label for="register-email">Email</label>
-                    <input type="email" id="register-email" placeholder="Enter your email" required>
+                    <input type="email" id="register-email" placeholder="Enter your email" required disabled>
                 </div>
                 <div class="form-group">
                     <label for="register-password">Password</label>
-                    <input type="password" id="register-password" placeholder="Enter your password" required>
+                    <input type="password" id="register-password" placeholder="Enter your password" required disabled>
                 </div>
                 <div class="form-group">
                     <label for="register-confirm-password">Confirm Password</label>
-                    <input type="password" id="register-confirm-password" placeholder="Confirm your password" required>
+                    <input type="password" id="register-confirm-password" placeholder="Confirm your password" required disabled>
                 </div>
-                <button type="submit" class="btn btn-block">Register</button>
+                <button type="submit" class="btn btn-block" disabled>Register</button>
                 <div class="form-footer">
                     <p>Already have an account? <a href="#" id="go-to-login">Login now</a></p>
                 </div>
@@ -772,6 +862,9 @@
                         <i class="fa fa-shopping-bag"></i>
                         Blingo
                     </a>
+                    <div id="user-greeting" class="user-greeting hidden">
+                        Hello, <span id="username-display"></span>
+                    </div>
                     <nav>
                         <ul>
                             <li><a href="#" class="nav-link" data-category="all">Products</a></li>
@@ -779,10 +872,16 @@
                         </ul>
                     </nav>
                     <div class="search-cart">
-                        <form class="search-form">
-                            <input type="text" placeholder="Search products...">
-                            <button type="submit"><i class="fas fa-search"></i></button>
+                        <form class="search-form" id="search-form">
+                            <input type="text" id="search-input" placeholder="Search products...">
+                            <button type="button" id="search-button"><i class="fas fa-search"></i></button>
                         </form>
+                        <div class="user-controls">
+                            <button id="logout-btn" class="btn-logout hidden">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span class="logout-text">Logout</span>
+                            </button>
+                        </div>
                         <div class="cart-icon" id="open-cart">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="cart-count">0</span>
@@ -802,13 +901,12 @@
                     <button class="category-btn" data-category="pc-components">PC Components</button>
                     <button class="category-btn" data-category="Electronics">Electronics</button>
                     <button class="category-btn" data-category="Transports">Transports</button>
-
                 </div>
                 <div class="products-grid">
                     <!-- Cosmetics Products -->
                     <div class="product-card" data-category="cosmetics">
                         <div class="product-image">
-                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/rolex-4807479_640.png" alt="Rolex Submariner">
+                            <img src="Imgs/rolex-4807479_640.png" alt="Rolex Submariner">
                             <span class="discount-tag">-15%</span>
                         </div>
                         <div class="product-info">
@@ -818,14 +916,14 @@
                                 <span class="original-price">$153,000</span>
                             </div>
                             <div class="product-actions">
-                                <button class="btn add-to-cart" data-id="1" data-name="Rolex Submariner" data-price="130050" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/rolex-4807479_640.png">Add to Cart</button>
-                                <button class="btn buy-now" data-id="1" data-name="Rolex Submariner" data-price="130050" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/rolex-4807479_640.png">Buy Now</button>
+                                <button class="btn add-to-cart" data-id="1" data-name="Rolex Submariner" data-price="130050" data-img="Imgs/rolex-4807479_640.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="1" data-name="Rolex Submariner" data-price="130050" data-img="Imgs/rolex-4807479_640.png">Buy Now</button>
                             </div>
                         </div>
                     </div>
                     <div class="product-card" data-category="cosmetics">
                         <div class="product-image">
-                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/783e6f_012983d54aae4996a27900867aea1b3f~mv2.png" alt="Jada Dubai x Passion Jewellers Passion Diamond Shoes">
+                            <img src="Imgs/783e6f_012983d54aae4996a27900867aea1b3f~mv2.png" alt="Jada Dubai x Passion Jewellers Passion Diamond Shoes">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">Jada Dubai x Passion Jewellers Passion Diamond Shoes</h3>
@@ -833,8 +931,8 @@
                                 <span class="current-price">$17,700,000</span>
                             </div>
                             <div class="product-actions">
-                                <button class="btn add-to-cart" data-id="2" data-name="Jada Dubai x Passion Jewellers Passion Diamond Shoes" data-price="17700000" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/783e6f_012983d54aae4996a27900867aea1b3f~mv2.png">Add to Cart</button>
-                                <button class="btn buy-now" data-id="2" data-name="Jada Dubai x Passion Jewellers Passion Diamond Shoes" data-price="17700000" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/783e6f_012983d54aae4996a27900867aea1b3f~mv2.png">Buy Now</button>
+                                <button class="btn add-to-cart" data-id="2" data-name="Jada Dubai x Passion Jewellers Passion Diamond Shoes" data-price="17700000" data-img="Imgs/783e6f_012983d54aae4996a27900867aea1b3f~mv2.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="2" data-name="Jada Dubai x Passion Jewellers Passion Diamond Shoes" data-price="17700000" data-img="Imgs/783e6f_012983d54aae4996a27900867aea1b3f~mv2.png">Buy Now</button>
                             </div>
                         </div>
                     </div>
@@ -842,7 +940,7 @@
                     <!-- Clothing Products -->
                     <div class="product-card" data-category="clothing">
                         <div class="product-image">
-                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/louis-vuitton-double-breasted-cashmere-and-wool-blend-pont-neuf-jacket--HSFJ7EKQ0706_PM2_Front%20view.png">
+                            <img src="Imgs/louis-vuitton-double-breasted-cashmere-and-wool-blend-pont-neuf-jacket--HSFJ7EKQ0706_PM2_Front%20view.png">
                             <span class="discount-tag">-5%</span>
                         </div>
                         <div class="product-info">
@@ -852,8 +950,8 @@
                                 <span class="original-price">$3,900.00</span>
                             </div>
                             <div class="product-actions">
-                                <button class="btn add-to-cart" data-id="3" data-name="Double-Breasted Cashmere And Wool Blend Pont Neuf Jacket" data-price="370500" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/louis-vuitton-double-breasted-cashmere-and-wool-blend-pont-neuf-jacket--HSFJ7EKQ0706_PM2_Front%20view.png">Add to Cart</button>
-                                <button class="btn buy-now" data-id="3" data-name="Double-Breasted Cashmere And Wool Blend Pont Neuf Jacket" data-price="370500" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/louis-vuitton-double-breasted-cashmere-and-wool-blend-pont-neuf-jacket--HSFJ7EKQ0706_PM2_Front%20view.png">Buy Now</button>
+                                <button class="btn add-to-cart" data-id="3" data-name="Double-Breasted Cashmere And Wool Blend Pont Neuf Jacket" data-price="370500" data-img="Imgs/louis-vuitton-double-breasted-cashmere-and-wool-blend-pont-neuf-jacket--HSFJ7EKQ0706_PM2_Front%20view.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="3" data-name="Double-Breasted Cashmere And Wool Blend Pont Neuf Jacket" data-price="370500" data-img="Imgs/louis-vuitton-double-breasted-cashmere-and-wool-blend-pont-neuf-jacket--HSFJ7EKQ0706_PM2_Front%20view.png">Buy Now</button>
                             </div>
                         </div>
                     </div>
@@ -861,7 +959,7 @@
                     <!-- PC Components Products -->
                     <div class="product-card" data-category="pc-components">
                         <div class="product-image">
-                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg" alt="Nvidia RTX 5090">
+                            <img src="Imgs/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg" alt="Nvidia RTX 5090">
                             <span class="discount-tag">-1%</span>
                         </div>
                         <div class="product-info">
@@ -871,15 +969,15 @@
                                 <span class="original-price">$1,999</span>
                             </div>
                             <div class="product-actions">
-                                <button class="btn add-to-cart" data-id="4" data-name="Nvidia RTX 5090" data-price="1979" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg">Add to Cart</button>
-                                <button class="btn buy-now" data-id="4" data-name="Nvidia RTX 5090" data-price="1979" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg">Buy Now</button>
+                                <button class="btn add-to-cart" data-id="4" data-name="Nvidia RTX 5090" data-price="1979" data-img="Imgs/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg">Add to Cart</button>
+                                <button class="btn buy-now" data-id="4" data-name="Nvidia RTX 5090" data-price="1979" data-img="Imgs/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg">Buy Now</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="product-card" data-category="pc-components">
                         <div class="product-image">
-                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/rog-azoth-extreme.jpg" alt="ROG Azoth Extreme">
+                            <img src="Imgs/rog-azoth-extreme.jpg" alt="ROG Azoth Extreme">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">ROG Azoth Extreme</h3>
@@ -887,15 +985,15 @@
                                 <span class="current-price">$500</span>
                             </div>
                             <div class="product-actions">
-                                <button class="btn add-to-cart" data-id="5" data-name="ROG Azoth Extreme" data-price="500" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/rog-azoth-extreme.jpg">Add to Cart</button>
-                                <button class="btn buy-now" data-id="5" data-name="ROG Azoth Extreme" data-price="500" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/rog-azoth-extreme.jpg">Buy Now</button>
+                                <button class="btn add-to-cart" data-id="5" data-name="ROG Azoth Extreme" data-price="500" data-img="Imgs/rog-azoth-extreme.jpg">Add to Cart</button>
+                                <button class="btn buy-now" data-id="5" data-name="ROG Azoth Extreme" data-price="500" data-img="Imgs/rog-azoth-extreme.jpg">Buy Now</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="product-card" data-category="pc-components">
                         <div class="product-image">
-                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/2900400-ryzen-7-9800x3d.png" alt="High-Performance SSD">
+                            <img src="Imgs/2900400-ryzen-7-9800x3d.png" alt="High-Performance SSD">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">AMD RYZEN 7 9800X3D</h3>
@@ -903,8 +1001,8 @@
                                 <span class="current-price">$479</span>
                             </div>
                             <div class="product-actions">
-                                <button class="btn add-to-cart" data-id="6" data-name="AMD RYZEN 7 9800X3D" data-price="479" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/2900400-ryzen-7-9800x3d.png">Add to Cart</button>
-                                <button class="btn buy-now" data-id="6" data-name="AMD RYZEN 7 9800X3D" data-price="479" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/2900400-ryzen-7-9800x3d.png">Buy Now</button>
+                                <button class="btn add-to-cart" data-id="6" data-name="AMD RYZEN 7 9800X3D" data-price="479" data-img="Imgs/2900400-ryzen-7-9800x3d.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="6" data-name="AMD RYZEN 7 9800X3D" data-price="479" data-img="Imgs/2900400-ryzen-7-9800x3d.png">Buy Now</button>
                             </div>
                         </div>
                     </div>
@@ -912,8 +1010,7 @@
                     <!-- Cars/etc -->
                     <div class="product-card" data-category="Transports">
                         <div class="product-image">
-                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/SILVER+EDGE_01_2015-20200821-Global-High_front_34_LR-1I70Umhy.png" alt="SILVER EDGE
-                            ">
+                            <img src="Imgs/SILVER+EDGE_01_2015-20200821-Global-High_front_34_LR-1I70Umhy.png" alt="SILVER EDGE">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">SILVER EDGE</h3>
@@ -921,15 +1018,15 @@
                                 <span class="current-price">$75,000,000</span>
                             </div>
                             <div class="product-actions">
-                                <button class="btn add-to-cart" data-id="7" data-name="SILVER EDGE" data-price="75000000" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/SILVER+EDGE_01_2015-20200821-Global-High_front_34_LR-1I70Umhy.png">Add to Cart</button>
-                                <button class="btn buy-now" data-id="7" data-name="SILVER EDGE" data-price="75000000" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/SILVER+EDGE_01_2015-20200821-Global-High_front_34_LR-1I70Umhy.png">Buy Now</button>
+                                <button class="btn add-to-cart" data-id="7" data-name="SILVER EDGE" data-price="75000000" data-img="Imgs/SILVER+EDGE_01_2015-20200821-Global-High_front_34_LR-1I70Umhy.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="7" data-name="SILVER EDGE" data-price="75000000" data-img="Imgs/SILVER+EDGE_01_2015-20200821-Global-High_front_34_LR-1I70Umhy.png">Buy Now</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="product-card" data-category="Transports">
                         <div class="product-image">
-                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/download.jpg" alt="2001 Gulfstream IVSP Private Plane">
+                            <img src="Imgs/download.jpg" alt="2001 Gulfstream IVSP Private Plane">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">2001 Gulfstream IVSP Private Plane</h3>
@@ -937,15 +1034,15 @@
                                 <span class="current-price">$3,995,000</span>
                             </div>
                             <div class="product-actions">
-                                <button class="btn add-to-cart" data-id="10" data-name="2001 Gulfstream IVSP Private Plane" data-price="3995000" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/download.jpg">Add to Cart</button>
-                                <button class="btn buy-now" data-id="10" data-name="2001 Gulfstream IVSP Private Plane" data-price="3995000" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/download.jpg">Buy Now</button>
+                                <button class="btn add-to-cart" data-id="10" data-name="2001 Gulfstream IVSP Private Plane" data-price="3995000" data-img="Imgs/download.jpg">Add to Cart</button>
+                                <button class="btn buy-now" data-id="10" data-name="2001 Gulfstream IVSP Private Plane" data-price="3995000" data-img="Imgs/download.jpg">Buy Now</button>
                             </div>
                         </div>
                     </div>
                     <!-- Electronics -->
                     <div class="product-card" data-category="Electronics">
                         <div class="product-image">
-                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/pexels-japy-29020349-copy.png" alt="iPhone 16 Pro">
+                            <img src="Imgs/pexels-japy-29020349-copy.png" alt="iPhone 16 Pro">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">iPhone 16 Pro</h3>
@@ -953,15 +1050,15 @@
                                 <span class="current-price">$999</span>
                             </div>
                             <div class="product-actions">
-                                <button class="btn add-to-cart" data-id="8" data-name="iPhone 16 Pro" data-price="999" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/pexels-japy-29020349-copy.png">Add to Cart</button>
-                                <button class="btn buy-now" data-id="8" data-name="iPhone 16 Pro" data-price="999" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/pexels-japy-29020349-copy.png">Buy Now</button>
+                                <button class="btn add-to-cart" data-id="8" data-name="iPhone 16 Pro" data-price="999" data-img="Imgs/pexels-japy-29020349-copy.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="8" data-name="iPhone 16 Pro" data-price="999" data-img="Imgs/pexels-japy-29020349-copy.png">Buy Now</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="product-card" data-category="Electronics">
                         <div class="product-image">
-                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/apple-vision-pro-features.jpg" alt="Apple Vision Pro">
+                            <img src="Imgs/apple-vision-pro-features.jpg" alt="Apple Vision Pro">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">Apple Vision Pro</h3>
@@ -969,15 +1066,15 @@
                                 <span class="current-price">$3,699</span>
                             </div>
                             <div class="product-actions">
-                                <button class="btn add-to-cart" data-id="9" data-name="Apple Vision Pro" data-price="3699" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/apple-vision-pro-features.jpg">Add to Cart</button>
-                                <button class="btn buy-now" data-id="9" data-name="Apple Vision Pro" data-price="3699" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/apple-vision-pro-features.jpg">Buy Now</button>
+                                <button class="btn add-to-cart" data-id="9" data-name="Apple Vision Pro" data-price="3699" data-img="Imgs/apple-vision-pro-features.jpg">Add to Cart</button>
+                                <button class="btn buy-now" data-id="9" data-name="Apple Vision Pro" data-price="3699" data-img="Imgs/apple-vision-pro-features.jpg">Buy Now</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="product-card" data-category="Electronics">
                         <div class="product-image">
-                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/custom_filename.png" alt="Samsung Galaxy S25 Ultra">
+                            <img src="Imgs/custom_filename.png" alt="Samsung Galaxy S25 Ultra">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">Samsung Galaxy S25 Ultra</h3>
@@ -985,8 +1082,8 @@
                                 <span class="current-price">$1,420</span>
                             </div>
                             <div class="product-actions">
-                                <button class="btn add-to-cart" data-id="10" data-name="Samsung Galaxy S25 Ultra" data-price="1420" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/custom_filename.png">Add to Cart</button>
-                                <button class="btn buy-now" data-id="10" data-name="Samsung Galaxy S25 Ultra" data-price="1420" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/custom_filename.png">Buy Now</button>
+                                <button class="btn add-to-cart" data-id="10" data-name="Samsung Galaxy S25 Ultra" data-price="1420" data-img="Imgs/custom_filename.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="10" data-name="Samsung Galaxy S25 Ultra" data-price="1420" data-img="Imgs/custom_filename.png">Buy Now</button>
                             </div>
                         </div>
                     </div>
@@ -994,7 +1091,7 @@
                     <!-- Packs -->
                     <div class="product-card" data-category="packs">
                         <div class="product-image">
-                            <img src="file:///C:/Users/Administrator/Downloads/Eshop%20Website/level_3_bundle_22.png" alt="STGAubron Gaming PC Bundle">
+                            <img src="Imgs/level_3_bundle_22.png" alt="STGAubron Gaming PC Bundle">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">STGAubron Gaming PC Bundle</h3>
@@ -1002,13 +1099,11 @@
                                 <span class="current-price">$550</span>
                             </div>
                             <div class="product-actions">
-                                <button class="btn add-to-cart" data-id="11" data-name="STGAubron Gaming PC Bundle" data-price="550" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/level_3_bundle_22.png">Add to Cart</button>
-                                <button class="btn buy-now" data-id="11" data-name="STGAubron Gaming PC Bundle" data-price="550" data-img="file:///C:/Users/Administrator/Downloads/Eshop%20Website/level_3_bundle_22.png">Buy Now</button>
+                                <button class="btn add-to-cart" data-id="11" data-name="STGAubron Gaming PC Bundle" data-price="550" data-img="Imgs/level_3_bundle_22.png">Add to Cart</button>
+                                <button class="btn buy-now" data-id="11" data-name="STGAubron Gaming PC Bundle" data-price="550" data-img="Imgs/level_3_bundle_22.png">Buy Now</button>
                             </div>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -1255,6 +1350,33 @@
         let discountAmount = 0;
         let discountApplied = false;
 
+        // User authentication
+        const validUsers = [
+            { email: "dingothegoat@example.com", username: "admin_dingothegoat", password: "yourmamaissexy" }
+        ];
+        let currentUser = null;
+
+        // Check if user is logged in from localStorage
+        function checkLoggedIn() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (loggedInUser) {
+                const user = JSON.parse(loggedInUser);
+                const validUser = validUsers.find(u => 
+                    (u.email === user.email || u.username === user.username) && 
+                    u.password === user.password
+                );
+                
+                if (validUser) {
+                    currentUser = validUser;
+                    document.getElementById('logout-btn').classList.remove('hidden');
+                    document.getElementById('user-greeting').classList.remove('hidden');
+                    document.getElementById('username-display').textContent = validUser.username || validUser.email.split('@')[0];
+                    loginPage.classList.add('hidden');
+                    shopPage.classList.remove('hidden');
+                }
+            }
+        }
+
         // DOM Elements
         const loginPage = document.getElementById('login-page');
         const registerPage = document.getElementById('register-page');
@@ -1279,16 +1401,39 @@
         // Form Submissions
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            // In a real application, you would validate and authenticate the user here
-            loginPage.classList.add('hidden');
-            shopPage.classList.remove('hidden');
+            const emailOrUsername = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const stayLoggedIn = document.getElementById('stay-logged-in').checked;
+            
+            // Validate user
+            const user = validUsers.find(u => 
+                (u.email === emailOrUsername || u.username === emailOrUsername) && 
+                u.password === password
+            );
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('logout-btn').classList.remove('hidden');
+                document.getElementById('user-greeting').classList.remove('hidden');
+                document.getElementById('username-display').textContent = user.username || user.email.split('@')[0];
+                document.getElementById('login-error').textContent = '';
+                
+                if (stayLoggedIn) {
+                    localStorage.setItem('loggedInUser', JSON.stringify(user));
+                } else {
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+                }
+                
+                loginPage.classList.add('hidden');
+                shopPage.classList.remove('hidden');
+            } else {
+                document.getElementById('login-error').textContent = 'Invalid email/username or password';
+            }
         });
 
         document.getElementById('register-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            // In a real application, you would validate and create a new user account here
-            registerPage.classList.add('hidden');
-            shopPage.classList.remove('hidden');
+            // Registration is disabled in this version
         });
 
         // Product filtering
@@ -1327,6 +1472,30 @@
                 });
                 filterProducts(category);
             });
+        });
+
+        // Search functionality
+        document.getElementById('search-button').addEventListener('click', function() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
+            productCards.forEach(card => {
+                const productName = card.querySelector('.product-title').textContent.toLowerCase();
+                if (searchTerm === '' || productName.startsWith(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Reset category buttons
+            categoryButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.category-btn[data-category="all"]').classList.add('active');
+        });
+
+        // Prevent form submission on enter
+        document.getElementById('search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('search-button').click();
         });
 
         // Cart functionality
@@ -1454,28 +1623,55 @@
         document.getElementById('apply-coupon').addEventListener('click', function() {
             const couponCode = document.getElementById('coupon-code').value.trim().toUpperCase();
     
-        // List of valid coupon codes
-        const validCoupons = ['DINGO', 'WELCOME', 'LUXE'];
-    
-        if (validCoupons.includes(couponCode)) {
-            let discountPercentage = 0;
+            // List of valid coupon codes
+            const validCoupons = ['DINGO', 'WELCOME', 'LUXE'];
         
-            // Set discount percentage based on coupon code
-            if (couponCode === 'DINGO') discountPercentage = 1;
-            if (couponCode === 'WELCOME') discountPercentage = 0.2;
-            if (couponCode === 'LUXE') discountPercentage = 0.35;
-        
-            discountAmount = calculateSubtotal() * discountPercentage;
-            discountApplied = true;
-            document.getElementById('discount-row').style.display = 'flex';
-            document.getElementById('cart-discount').textContent = '-$' + discountAmount.toFixed(2);
-            updateCartTotals();
-        
-            // Show confirmation
-            alert(`Coupon applied successfully! ${discountPercentage*100}% discount added.`);
-        } else {
-            alert('Invalid coupon code. Please try again. Use A Valid Code Next Time!');
-        }
+            if (validCoupons.includes(couponCode)) {
+                let discountPercentage = 0;
+            
+                // Set discount percentage based on coupon code
+                if (couponCode === 'DINGO') discountPercentage = 0.01;
+                if (couponCode === 'WELCOME') discountPercentage = 0.2;
+                if (couponCode === 'LUXE') discountPercentage = 0.35;
+            
+                discountAmount = calculateSubtotal() * discountPercentage;
+                discountApplied = true;
+                document.getElementById('discount-row').style.display = 'flex';
+                document.getElementById('cart-discount').textContent = '-$' + discountAmount.toFixed(2);
+                updateCartTotals();
+            
+                // Show confirmation
+                alert(`Coupon applied successfully! ${(discountPercentage*100).toFixed(0)}% discount added.`);
+            } else {
+                alert('Invalid coupon code. Please try again. Use A Valid Code Next Time!');
+            }
+        });
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            cartItems = [];
+            updateCartCount();
+            document.getElementById('logout-btn').classList.add('hidden');
+            document.getElementById('user-greeting').classList.add('hidden');
+            localStorage.removeItem('loggedInUser');
+            sessionStorage.removeItem('loggedInUser');
+            currentUser = null;
+            shopPage.classList.add('hidden');
+            cartPage.classList.add('hidden');
+            checkoutPage.classList.add('hidden');
+            successPage.classList.add('hidden');
+            loginPage.classList.remove('hidden');
+            
+            // Reset search and filters
+            document.getElementById('search-input').value = '';
+            filterProducts('all');
+            categoryButtons.forEach(btn => {
+                if (btn.dataset.category === 'all') {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
         });
 
         // Cart functions
@@ -1651,6 +1847,9 @@
                 document.getElementById('order-discount-row').style.display = 'none';
             }
         }
+
+        // Initialize the page
+        checkLoggedIn();
     </script>
 </body>
 </html>
