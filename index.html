@@ -839,6 +839,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+
+
+
+    
     <!-- Login Page -->
     <div id="login-page" class="page">
         <div class="form-container fade-in">
@@ -1417,10 +1421,46 @@
         // User authentication
         let currentUser = null;
 const validUsers = [
-    { email: "admin@example.com", username: "admin", password: "admin1234", isAdmin: true },
-    { email: "user1@example.com", username: "user", password: "user1234", isAdmin: false }
+    { email: "admin@example.com", username: "admin", password: "admin", isAdmin: true },
+    { email: "user@example.com", username: "user", password: "user1234", isAdmin: false }
 ];
 let userSessions = []; // Track all active sessions
+
+
+// Global session simulation
+const GlobalSession = {
+  // This simulates a "last global logout" timestamp
+  lastGlobalLogout: localStorage.getItem('globalLastLogout') || 0,
+  
+  // This would be a database table in a real backend
+  activeSessions: JSON.parse(localStorage.getItem('globalActiveSessions') || '[]'),
+  
+  // Simulate checking with a "server"
+  checkSession: function(sessionId) {
+    const session = this.activeSessions.find(s => s.id === sessionId);
+    if (!session || session.lastLogout > this.lastGlobalLogout) {
+      return false; // Session invalid
+    }
+    return true;
+  },
+  
+  // Simulate admin force logout
+  forceLogoutAll: function() {
+    this.lastGlobalLogout = Date.now();
+    localStorage.setItem('globalLastLogout', this.lastGlobalLogout);
+    return true;
+  },
+  
+  // Simulate adding a new session
+  addSession: function(session) {
+    this.activeSessions.push(session);
+    localStorage.setItem('globalActiveSessions', JSON.stringify(this.activeSessions));
+  }
+};
+
+
+
+
 
         // Check if user is logged in from localStorage
 function checkLoggedIn() {
@@ -1487,48 +1527,50 @@ function checkLoggedIn() {
         });
 
         // Form Submissions
-document.getElementById('login-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const emailOrUsername = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const stayLoggedIn = document.getElementById('stay-logged-in').checked;
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const emailOrUsername = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  const stayLoggedIn = document.getElementById('stay-logged-in').checked;
 
-    const user = validUsers.find(u => 
-        (u.email === emailOrUsername || u.username === emailOrUsername) && 
-        u.password === password
-    );
+  const user = validUsers.find(u => 
+    (u.email === emailOrUsername || u.username === emailOrUsername) && 
+    u.password === password
+  );
 
-    if (user) {
-        const sessionId = Date.now().toString();
-        const sessionData = {
-            id: sessionId,
-            user: {
-                email: user.email,
-                username: user.username,
-                password: user.password
-            }
-        };
+  if (user) {
+    const sessionId = 'session_' + Date.now();
+    const sessionData = {
+      id: sessionId,
+      user: {
+        email: user.email,
+        username: user.username
+      },
+      lastLogout: 0
+    };
 
-        if (stayLoggedIn) {
-            localStorage.setItem('loggedInUser', JSON.stringify(sessionData));
-        } else {
-            sessionStorage.setItem('loggedInUser', JSON.stringify(sessionData));
-        }
-
-        currentUser = user;
-        userSessions.push({
-            id: sessionId,
-            user: user,
-            timestamp: new Date()
-        });
-
-        // Save user data when they log in
-        saveUserData();
-        
-        updateUIAfterLogin(user);
+    // Store session locally
+    if (stayLoggedIn) {
+      localStorage.setItem('currentSession', JSON.stringify(sessionData));
     } else {
-        document.getElementById('login-error').textContent = 'Invalid email/username or password';
+      sessionStorage.setItem('currentSession', JSON.stringify(sessionData));
     }
+
+    // Add to "global" session tracker
+    GlobalSession.addSession({
+      id: sessionId,
+      userId: user.email,
+      lastLogout: 0
+    });
+
+    currentUser = user;
+    updateUIAfterLogin(user);
+    
+    // Start session checker
+    startSessionChecker();
+  } else {
+    document.getElementById('login-error').textContent = 'Invalid email/username or password';
+  }
 });
 
 function updateUIAfterLogin(user) {
@@ -1589,6 +1631,18 @@ function updateUIAfterLogin(user) {
             });
         });
 
+
+// When page loads
+document.addEventListener('DOMContentLoaded', function() {
+  checkLoggedIn();
+  
+  // If logged in, start checking session
+  if (currentUser) {
+    startSessionChecker();
+  }
+});
+
+
         // Search functionality
         document.getElementById('search-button').addEventListener('click', function() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
@@ -1648,17 +1702,17 @@ document.getElementById('blingo-logo').addEventListener('click', function(e) {
 
         // Force logout all users
 
-document.getElementById('force-logout-all').addEventListener('click', function() {
-    if (confirm("Are you sure you want to log out all users?")) {
-        // Set a flag in localStorage that all clients check
-        localStorage.setItem('globalForceLogout', Date.now().toString());
-        
-        // Logout the current user immediately
-        performLogout();
-        
-        // Show confirmation
-        alert("All users will be logged out on their next action.");
-    }
+        document.getElementById('force-logout-all').addEventListener('click', function() {
+  if (confirm("This will log out ALL users worldwide. Continue?")) {
+    // Simulate server-side global logout
+    GlobalSession.forceLogoutAll();
+    
+    // Log out current user
+    performLogout();
+    
+    // Show admin confirmation
+    alert("All users have been logged out globally.");
+  }
 });
 // Check for forced logout
 function checkForForceLogout() {
@@ -1701,6 +1755,24 @@ function collectUserData() {
     // Note: This requires a backend API to get the real IP
     let ipAddress = "Not available (frontend only)";
     
+
+    let sessionCheckInterval;
+
+function startSessionChecker() {
+  // Check every 30 seconds in production, more frequent for demo
+  sessionCheckInterval = setInterval(checkSessionValidity, 5000); 
+}
+
+function checkSessionValidity() {
+  const session = JSON.parse(localStorage.getItem('currentSession') || sessionStorage.getItem('currentSession') || 'null');
+  
+  if (session && !GlobalSession.checkSession(session.id)) {
+    // Session invalidated by global logout
+    performLogout();
+    alert("You've been logged out by admin.");
+  }
+}
+
     // Get current page URL
     const pageUrl = window.location.href;
     
