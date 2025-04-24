@@ -79,6 +79,56 @@
             margin-right: 10px;
             font-size: 28px;
         }
+/* Sliding Banner Styles */
+.sliding-banner {
+    width: 100%;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    margin: 20px 0 40px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.banner-slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.banner-slide.active {
+    opacity: 1;
+}
+
+.banner-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.banner-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.banner-caption h3 {
+    font-size: 2rem;
+    margin-bottom: 5px;
+    color: #7e57c2;
+}
+
+.banner-caption p {
+    font-size: 1.2rem;
+    margin: 0;
+}
 
 
         /* Adjustable Navigation */
@@ -100,6 +150,7 @@
 .header-content {
     position: relative; /* Needed for absolute positioning */
 }
+
 
         nav ul {
             display: flex;
@@ -835,6 +886,34 @@
                 margin-right: 10px;
             }
         }
+
+
+        /* Minimal Footer Styles */
+.site-footer {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 20px 0;
+    margin-top: 40px;
+    font-size: 0.9rem;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-content a {
+    color: #7e57c2;
+    text-decoration: none;
+}
+
+.footer-content a:hover {
+    text-decoration: underline;
+}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -970,6 +1049,36 @@
                     <button class="category-btn" data-category="Electronics">Electronics</button>
                     <button class="category-btn" data-category="Transports">Transports</button>
                 </div>
+
+                <h2 class="section-title">Featured Products</h2>
+
+                <!-- Sliding Banner -->
+                <div class="sliding-banner">
+                    <div class="banner-slide active">
+                        <img src="Imgs/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg" alt="RTX 5090">
+                        <div class="banner-caption">
+                            <h3>GIGABYTE</h3>
+                            <p>RTX5066T1</p>
+                        </div>
+                    </div>
+                    <div class="banner-slide">
+                        <img src="Imgs/rog-azoth-extreme.jpg" alt="ROG Azoth">
+                        <div class="banner-caption">
+                            <h3>GEFORCE</h3>
+                            <p>Powering Advanced AI</p>
+                        </div>
+                    </div>
+                    <div class="banner-slide">
+                        <img src="Imgs/2900400-ryzen-7-9800x3d.png" alt="Ryzen 9800X3D">
+                        <div class="banner-caption">
+                            <h3>ULTIMATE PERFORMANCE</h3>
+                            <p>Next Gen Computing</p>
+                        </div>
+                    </div>
+                </div>
+
+
+
                 <div class="products-grid">
                     <!-- Cosmetics Products -->
                     <div class="product-card" data-category="cosmetics">
@@ -1460,7 +1569,33 @@ const GlobalSession = {
 
 
 
+// Sliding Banner Functionality
+function initSlidingBanner() {
+    const slides = document.querySelectorAll('.banner-slide');
+    if (slides.length === 0) return; // Only run on shop page
+    
+    let currentSlide = 0;
+    
+    function showSlide(index) {
+        slides.forEach(slide => slide.classList.remove('active'));
+        slides[index].classList.add('active');
+    }
+    
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }
+    
+    // Auto-advance every 10 seconds
+    setInterval(nextSlide, 10000);
+}
 
+// Call this when shop page loads
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('shop-page') && !document.getElementById('shop-page').classList.contains('hidden')) {
+        initSlidingBanner();
+    }
+});
 
         // Check if user is logged in from localStorage
 function checkLoggedIn() {
@@ -2263,5 +2398,14 @@ setInterval(checkForForceLogout, 5000); // Check every 5 seconds
         // Initialize the page
         checkLoggedIn();
     </script>
+
+
+<!-- Minimal Footer -->
+<footer class="site-footer">
+    <div class="footer-content">
+        <p>&copy; 2023 Blingo. All Rights Reserved.</p>
+        <p><a href="mailto:support@blingo.com">support@blingo.com</a></p>
+    </div>
+</footer>
 </body>
 </html>
