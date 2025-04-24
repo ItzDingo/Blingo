@@ -33,6 +33,9 @@
         }
 
 
+
+
+
 #admin-controls-container {
     position: absolute;
     right: 20px;
@@ -887,6 +890,19 @@
             }
         }
 
+/* Update sliding banner margins */
+.sliding-banner {
+    margin: 0 0 40px 0; /* Reduced top margin */
+    border-radius: 0; /* Full width */
+    box-shadow: none; /* Cleaner look */
+}
+
+/* Add space between banner and products */
+.products-grid {
+    margin-top: 30px;
+}
+
+
 
         /* Minimal Footer Styles */
 .site-footer {
@@ -1051,7 +1067,7 @@
                 </div>
 
                 <!-- Sliding Banner -->
-                <div class="sliding-banner">
+                <div class="sliding-banner" data-show-categories="all,packs">
                     <div class="banner-slide active">
                         <img src="Imgs/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg" alt="RTX 5090">
                         <div class="banner-caption">
@@ -1731,15 +1747,39 @@ function updateUIAfterLogin(user) {
         const productCards = document.querySelectorAll('.product-card');
         const navLinks = document.querySelectorAll('.nav-link');
 
-        function filterProducts(category) {
-            productCards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+        // Modify category filtering to handle banner visibility
+function filterProducts(category) {
+    // Product cards filtering (keep existing)
+    productCards.forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
         }
+    });
+    
+    // Handle banner visibility
+    const banner = document.querySelector('.sliding-banner');
+    if (banner) {
+        const showCategories = banner.dataset.showCategories.split(',');
+        banner.style.display = showCategories.includes(category) ? 'block' : 'none';
+    }
+}
+
+// Update initialization to hide banner by default
+document.addEventListener('DOMContentLoaded', function() {
+    const banner = document.querySelector('.sliding-banner');
+    if (banner) {
+        banner.style.display = 'none'; // Start hidden
+    }
+    
+    // Show only if initial category is 'all' or 'packs'
+    if (document.querySelector('.category-btn.active').dataset.category === 'all' || 
+        document.querySelector('.category-btn.active').dataset.category === 'packs') {
+        banner.style.display = 'block';
+        initSlidingBanner();
+    }
+});
 
         categoryButtons.forEach(button => {
             button.addEventListener('click', function() {
