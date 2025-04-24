@@ -1336,7 +1336,7 @@ body.search-active .sliding-banner {
                         <img src="Imgs/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg" alt="RTX 5090">
                         <div class="banner-caption">
                             <h3>GIGABYTE</h3>
-                            <p>RTX5066T1</p>
+                            <p>RTX5090TI</p>
                         </div>
                     </div>
                     
@@ -1346,8 +1346,11 @@ body.search-active .sliding-banner {
                          data-product-name="ROG Azoth Extreme" 
                          data-product-price="500"
                          data-product-img="Imgs/rog-azoth-extreme.jpg">
-                         <img src="Imgs/rog-azoth-extreme.jpg" alt="RTX 5090">
-                        <!-- ... -->
+                         <img src="Imgs/rog-azoth-extreme.jpg" alt="ROG Azoth Extreme">
+                         <div class="banner-caption">
+                            <h3>ROG Azoth Extreme</h3>
+                            <p>Limited Edition</p>
+                        </div>
                     </div>
                     
                     <!-- Ryzen CPU Slide -->
@@ -1356,8 +1359,11 @@ body.search-active .sliding-banner {
                          data-product-name="AMD RYZEN 7 9800X3D" 
                          data-product-price="479"
                          data-product-img="Imgs/2900400-ryzen-7-9800x3d.png">
-                         <img src="Imgs/2900400-ryzen-7-9800x3d.png" alt="RTX 5090">
-                        <!-- ... -->
+                         <img src="Imgs/2900400-ryzen-7-9800x3d.png" alt="AMD RYZEN 7 9800X3D">
+                         <div class="banner-caption">
+                            <h3>AMD RYZEN</h3>
+                            <p>7 9800X3D</p>
+                        </div>
                     </div>
                 </div>
 
@@ -2065,6 +2071,7 @@ function filterProducts(category) {
     const banner = document.querySelector('.sliding-banner');
     if (banner) {
         banner.style.display = category === 'all' ? 'block' : 'none';
+
     }
 }
 
