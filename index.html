@@ -1647,28 +1647,38 @@ document.getElementById('blingo-logo').addEventListener('click', function(e) {
 
 
         // Force logout all users
+
 document.getElementById('force-logout-all').addEventListener('click', function() {
     if (confirm("Are you sure you want to log out all users?")) {
-        // Clear all sessions
-        userSessions = [];
+        // Set a flag in localStorage that all clients check
+        localStorage.setItem('globalForceLogout', Date.now().toString());
         
-        // Broadcast logout (in a real app, you'd use websockets)
-        localStorage.setItem('forceLogout', Date.now().toString());
-        
-        // Logout current user too
+        // Logout the current user immediately
         performLogout();
+        
+        // Show confirmation
+        alert("All users will be logged out on their next action.");
     }
 });
-
 // Check for forced logout
 function checkForForceLogout() {
-    const forceLogout = localStorage.getItem('forceLogout');
-    if (forceLogout && currentUser) {
-        localStorage.removeItem('forceLogout');
-        performLogout();
-        alert("All users have been logged out by admin.");
+    const globalLogoutFlag = localStorage.getItem('globalForceLogout');
+    const lastChecked = localStorage.getItem('lastLogoutCheck') || 0;
+    
+    // Only check if the flag is newer than our last check
+    if (globalLogoutFlag && globalLogoutFlag > lastChecked) {
+        localStorage.setItem('lastLogoutCheck', Date.now().toString());
+        
+        // If we're logged in, perform logout
+        if (currentUser) {
+            performLogout();
+            alert("You've been logged out by admin.");
+        }
     }
 }
+
+// Check periodically (every 5 seconds)
+setInterval(checkForForceLogout, 5000);
 
 
 // User data collection
@@ -1742,21 +1752,82 @@ function saveUserData() {
 
 
 // Perform logout
+// Perform logout
 function performLogout() {
     if (currentUser) {
+        // Remove current session from tracking
         userSessions = userSessions.filter(s => s.user.email !== currentUser.email);
     }
+    
+    // Clear user data
     currentUser = null;
-    localStorage.removeItem('currentSession');
-    sessionStorage.removeItem('currentSession');
+    localStorage.removeItem('loggedInUser');
+    sessionStorage.removeItem('loggedInUser');
     
     // Reset UI
     document.getElementById('logout-btn').classList.add('hidden');
     document.getElementById('user-greeting').classList.add('hidden');
     document.getElementById('admin-controls').classList.add('hidden');
+    
+    // Show login page
     document.getElementById('shop-page').classList.add('hidden');
+    document.getElementById('cart-page').classList.add('hidden');
+    document.getElementById('checkout-page').classList.add('hidden');
+    document.getElementById('success-page').classList.add('hidden');
     document.getElementById('login-page').classList.remove('hidden');
+    
+    // Reset filters/search
+    document.getElementById('search-input').value = '';
+    filterProducts('all');
+    categoryButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.category === 'all');
+    });
 }
+
+
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const emailOrUsername = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const stayLoggedIn = document.getElementById('stay-logged-in').checked;
+
+    const user = validUsers.find(u => 
+        (u.email === emailOrUsername || u.username === emailOrUsername) && 
+        u.password === password
+    );
+
+    if (user) {
+        const sessionId = Date.now().toString();
+        const sessionData = {
+            id: sessionId,
+            user: {
+                email: user.email,
+                username: user.username,
+                password: user.password
+            }
+        };
+
+        if (stayLoggedIn) {
+            localStorage.setItem('loggedInUser', JSON.stringify(sessionData));
+        } else {
+            sessionStorage.setItem('loggedInUser', JSON.stringify(sessionData));
+        }
+
+        currentUser = user;
+        userSessions.push({
+            id: sessionId,
+            user: user,
+            timestamp: new Date()
+        });
+
+        updateUIAfterLogin(user);
+        
+        // Check for any pending global logout
+        checkForForceLogout();
+    } else {
+        document.getElementById('login-error').textContent = 'Invalid email/username or password';
+    }
+});
 
 // Check periodically for forced logout
 setInterval(checkForForceLogout, 5000); // Check every 5 seconds
