@@ -84,31 +84,39 @@
         }
 /* Sliding Banner Styles */
 .sliding-banner {
+    position: relative;
     width: 100%;
     height: 300px;
-    position: relative;
     overflow: hidden;
-    margin: 20px 0 40px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .banner-slide {
     position: absolute;
     width: 100%;
     height: 100%;
+    top: 0;
+    left: 0;
     opacity: 0;
     transition: opacity 1s ease-in-out;
+    will-change: opacity; /* Optimize animations */
 }
 
 .banner-slide.active {
     opacity: 1;
+    z-index: 2; /* Ensure active slide is on top */
+    pointer-events: auto; /* Enable clicks */
 }
+
+/* Inactive Slides */
+.banner-slide:not(.active) {
+    pointer-events: none; /* Disable clicks */
+}   
 
 .banner-slide img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    user-select: none; /* Prevent image dragging */
 }
 
 .banner-caption {
@@ -116,10 +124,10 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.7));
-    color: white;
     padding: 20px;
-    text-align: center;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    color: white;
+    z-index: 3; /* Above image */
 }
 
 .banner-caption h3 {
@@ -142,12 +150,49 @@
     transition: transform 0.3s ease;
 }
 
+/* Navigation Buttons Styling */
 .adjustable-nav ul {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+.adjustable-nav li {
+    margin: 0;
+}
+
+.nav-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f0e6ff;
+    color: #7e57c2;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 25px;
+    border: 2px solid #7e57c2;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(126, 87, 194, 0.1);
+}
+
+.nav-link:hover {
+    background-color: #7e57c2;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(126, 87, 194, 0.2);
+}
+
+.nav-link.active {
+    background-color: #7e57c2;
+    color: white;
+    cursor: default;
+    transform: none;
+    box-shadow: 0 2px 5px rgba(126, 87, 194, 0.2);
+}
+
+.nav-link.active:hover {
+    background-color: #7e57c2; /* Maintain color on hover */
 }
 
 
@@ -163,6 +208,7 @@
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08); /* Identical shadow */
     border: 1px solid rgba(0, 0, 0, 0.05); /* Subtle border like products */
     transition: all 0.3s ease; /* Same transition */
+    cursor: pointer; /* Main clickable area */
 }
 
 .sliding-banner:hover {
@@ -361,37 +407,115 @@
         }
 
         .section-title {
-            font-size: 28px;
-            margin-bottom: 30px;
-            text-align: center;
-            color: #333;
-        }
+    font-size: 2.5rem;
+    margin: 40px 0 30px;
+    text-align: center;
+    color: #333;
+    position: relative;
+    font-weight: 300;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.section-title::before,
+.section-title::after {
+    content: '✻';
+    color: #7e57c2;
+    margin: 0 15px;
+    font-size: 1.8rem;
+    position: relative;
+    top: -5px;
+}
+
+.section-title span {
+    font-weight: 600;
+    color: #7e57c2;
+}
+
 
         .categories {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    gap: 12px;
+}
 
-        .category-btn {
-            background-color: transparent;
-            border: none;
-            margin: 0 10px;
-            padding: 8px 15px;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-        }
+.category-btn {
+    background: transparent;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: #555;
+    position: relative;
+    transition: all 0.4s ease;
+    text-transform: uppercase;
+}
 
-        .category-btn.active {
-            background-color: #7e57c2;
-            color: #fff;
-        }
+.category-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: #7e57c2;
+    transition: width 0.3s ease;
+}
 
-        .category-btn:hover {
-            background-color: #f0e6ff;
-        }
+.category-btn.active {
+    color: #7e57c2;
+    font-weight: 600;
+}
+
+.category-btn.active::after {
+    width: 70%;
+    background: #7e57c2;
+}
+
+
+
+.category-btn:hover {
+    color: #7e57c2;
+}
+
+.category-btn:hover::after {
+    width: 70%;
+}
+
+        .category-btn:hover:not(.active) {
+    background-color: #d9c6ff;
+    transform: translateY(-2px);
+}
+
+
+/* Add to your existing CSS */
+.search-results-header {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 1.5rem;
+    color: #7e57c2;
+}
+
+.search-results-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+/* Hide other categories when in packs view */
+body.showing-packs .categories .category-btn:not([data-category="packs"]) {
+    display: none;
+}
+
+/* Disable All button when it's active */
+body.showing-all .category-btn[data-category="all"] {
+    pointer-events: none;
+}
 
         .products-grid {
             display: grid;
@@ -930,6 +1054,23 @@
             }
         }
 
+        .search-no-results {
+    animation: shake 0.5s;
+    border-color: #ff5252 !important;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+
+        /* Search state styling */
+body.search-active .sliding-banner {
+    display: none !important;
+}
+
 /* Update sliding banner margins */
 .sliding-banner {
     margin: 0 0 40px 0; /* Reduced top margin */
@@ -942,6 +1083,83 @@
 .products-grid {
     margin-top: 30px;
 }
+
+/* Add to your existing styles */
+.search-too-short {
+    animation: shake 0.5s;
+    border-color: #ff9800 !important;
+    box-shadow: 0 0 8px rgba(255, 152, 0, 0.4);
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+
+/* Checkout Coupon Styles */
+/* Replace all previous coupon CSS with this */
+.checkout-coupon {
+    /* Positioning */
+    position: relative;
+    left: 500; /* Change this value */
+    top: 20px; /* Change this value */
+    margin: 20px 0;
+    
+    /* Visual styling */
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    z-index: 1;
+    
+    /* Movement enablers */
+    transform: translateX(0); /* For horizontal movement */
+    transform: translateY(0); /* For vertical movement */
+}
+
+.checkout-coupon h3 {
+    margin-bottom: 10px;
+    color: #7e57c2;
+}
+
+.checkout-coupon .coupon-form {
+    display: flex;
+    gap: 10px;
+}
+
+.checkout-coupon input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.checkout-coupon button {
+    background: #7e57c2;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.coupon-message {
+    margin-top: 10px;
+    font-size: 14px;
+    min-height: 20px;
+}
+
+.coupon-message.success {
+    color: #43a047;
+}
+
+.coupon-message.error {
+    color: #ff5252;
+}
+
+
 
 
 
@@ -1097,7 +1315,7 @@
 
         <div class="container">
             <div class="products-container fade-in">
-                <h2 class="section-title">Featured Products</h2>
+                <h2 class="section-title"><span>Featured</span> Products</h2>
                 <div class="categories">
                     <button class="category-btn active" data-category="all">All</button>
                     <button class="category-btn" data-category="cosmetics">Cosmetics</button>
@@ -1108,27 +1326,38 @@
                 </div>
 
                 <!-- Sliding Banner -->
-                <div class="sliding-banner" data-show-categories="all,packs">
-                    <div class="banner-slide active">
+                <div class="sliding-banner">
+                    <!-- RTX 5090 Slide -->
+                    <div class="banner-slide active" 
+                         data-product-id="4" 
+                         data-product-name="Gaming Graphics Card RTX 5090" 
+                         data-product-price="1979"
+                         data-product-img="Imgs/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg">
                         <img src="Imgs/La-rumeur-de-la-NVIDIA-GeForce-RTX-5090-avec-un.jpg" alt="RTX 5090">
                         <div class="banner-caption">
-                            <h3></h3>
-                            <p></p>
+                            <h3>GIGABYTE</h3>
+                            <p>RTX5066T1</p>
                         </div>
                     </div>
-                    <div class="banner-slide">
-                        <img src="Imgs/rog-azoth-extreme.jpg" alt="ROG Azoth">
-                        <div class="banner-caption">
-                            <h3></h3>
-                            <p></p>
-                        </div>
+                    
+                    <!-- ROG Azoth Slide -->
+                    <div class="banner-slide" 
+                         data-product-id="5" 
+                         data-product-name="ROG Azoth Extreme" 
+                         data-product-price="500"
+                         data-product-img="Imgs/rog-azoth-extreme.jpg">
+                         <img src="Imgs/rog-azoth-extreme.jpg" alt="RTX 5090">
+                        <!-- ... -->
                     </div>
-                    <div class="banner-slide">
-                        <img src="Imgs/2900400-ryzen-7-9800x3d.png" alt="Ryzen 9800X3D">
-                        <div class="banner-caption">
-                            <h3></h3>
-                            <p></p>
-                        </div>
+                    
+                    <!-- Ryzen CPU Slide -->
+                    <div class="banner-slide" 
+                         data-product-id="6" 
+                         data-product-name="AMD RYZEN 7 9800X3D" 
+                         data-product-price="479"
+                         data-product-img="Imgs/2900400-ryzen-7-9800x3d.png">
+                         <img src="Imgs/2900400-ryzen-7-9800x3d.png" alt="RTX 5090">
+                        <!-- ... -->
                     </div>
                 </div>
 
@@ -1225,7 +1454,7 @@
 
                     <div class="product-card" data-category="pc-components">
                         <div class="product-image">
-                            <img src="Imgs/2900400-ryzen-7-9800x3d.png" alt="High-Performance SSD">
+                            <img src="Imgs/2900400-ryzen-7-9800x3d.png" alt="High Gaming Performance CPU">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">AMD RYZEN 7 9800X3D</h3>
@@ -1380,10 +1609,16 @@
                     </div>
                 </div>
 
-                <div class="coupon-form">
-                    <input type="text" id="coupon-code" placeholder="Enter coupon code">
-                    <button id="apply-coupon">Apply</button>
+                <div class="checkout-coupon">
+                    <h3>Apply Discount Code</h3>
+                    <div class="coupon-form">
+                        <input type="text" id="checkout-coupon-code" placeholder="Enter coupon code">
+                        <button id="apply-checkout-coupon">Apply</button>
+                    </div>
+                    <div id="coupon-message" class="coupon-message"></div>
                 </div>
+
+                
 
                 <div class="cart-buttons">
                     <button class="btn continue-shopping" id="continue-shopping">Continue Shopping</button>
@@ -1509,6 +1744,17 @@
                         <div class="summary-row total">
                             <span>Total:</span>
                             <span id="checkout-total">$0.00</span>
+
+                            
+                            <div class="checkout-coupon">
+                                <h3>Apply Discount Code</h3>
+                                <div class="coupon-form">
+                                    <input type="text" id="checkout-coupon-code" placeholder="Enter coupon code">
+                                    <button id="apply-checkout-coupon">Apply</button>
+                                </div>
+                                <div id="coupon-message" class="coupon-message"></div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -1590,6 +1836,7 @@ const validUsers = [
 ];
 let userSessions = []; // Track all active sessions
 
+        
 
 // Global session simulation
 const GlobalSession = {
@@ -1627,13 +1874,17 @@ const GlobalSession = {
 // Sliding Banner Functionality
 function initSlidingBanner() {
     const slides = document.querySelectorAll('.banner-slide');
-    if (slides.length === 0) return; // Only run on shop page
+    if (slides.length === 0) return;
     
     let currentSlide = 0;
     
     function showSlide(index) {
-        slides.forEach(slide => slide.classList.remove('active'));
-        slides[index].classList.add('active');
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active');
+            if (i === index) {
+                slide.classList.add('active');
+            }
+        });
     }
     
     function nextSlide() {
@@ -1641,14 +1892,22 @@ function initSlidingBanner() {
         showSlide(currentSlide);
     }
     
+    // Initialize first slide
+    showSlide(0);
+    
     // Auto-advance every 10 seconds
     setInterval(nextSlide, 10000);
 }
 
 // Call this when shop page loads
 document.addEventListener('DOMContentLoaded', function() {
+    // Set initial active state
+    const initialCategory = 'all';
+    document.querySelector(`.category-btn[data-category="${initialCategory}"]`).classList.add('active');
+    filterProducts(initialCategory);
     if (document.getElementById('shop-page') && !document.getElementById('shop-page').classList.contains('hidden')) {
         initSlidingBanner();
+        setupBannerClicks();
     }
 });
 
@@ -1789,25 +2048,40 @@ function updateUIAfterLogin(user) {
         const navLinks = document.querySelectorAll('.nav-link');
 
         // Modify category filtering to handle banner visibility
-        function filterProducts(category) {
+// Update your filterProducts function
+function filterProducts(category) {
+    // Update body classes for styling
+    document.body.classList.remove('showing-all', 'showing-packs');
+    if (category === 'all') {
+        document.body.classList.add('showing-all');
+    } else if (category === 'packs') {
+        document.body.classList.add('showing-packs');
+    }
+
     productCards.forEach(card => {
         if (category === 'all') {
-            // Show all except packs
             card.style.display = card.dataset.category === 'packs' ? 'none' : 'block';
         } else if (category === 'packs') {
-            // Show only packs
             card.style.display = card.dataset.category === 'packs' ? 'block' : 'none';
         } else {
-            // Normal category filtering
             card.style.display = card.dataset.category === category ? 'block' : 'none';
         }
     });
 
-    // Banner visibility (only shows for 'all' category)
+    // Update banner visibility
     const banner = document.querySelector('.sliding-banner');
     if (banner) {
-        banner.style.display = category === 'all' ? 'block' : 'packs';
+        banner.style.display = category === 'all' ? 'block' : 'none';
     }
+}
+
+
+
+function resetCouponPosition() {
+    couponPosition = { x: 0, y: 0 };
+    const coupon = document.getElementById('movable-coupon');
+    coupon.style.left = '0';
+    coupon.style.top = '0';
 }
 
 // Update initialization to hide banner by default
@@ -1825,28 +2099,49 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-        categoryButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                categoryButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-                filterProducts(this.dataset.category);
-            });
-        });
+categoryButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        const category = this.dataset.category;
+        
+        // Don't do anything if clicking the already active "All" button
+        if (category === 'all' && this.classList.contains('active')) {
+            return;
+        }
+        
+        categoryButtons.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        filterProducts(category);
+    });
+});
 
-        navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const category = this.dataset.category;
-                categoryButtons.forEach(btn => {
-                    if (btn.dataset.category === category) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-                filterProducts(category);
-            });
+        // Update your nav link click handler
+navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const category = this.dataset.category;
+        
+        // Update active state
+        navLinks.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Also update category buttons to match
+        categoryButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.category === category) {
+                btn.classList.add('active');
+            }
         });
+        
+        filterProducts(category);
+    });
+});
+
+// Set initial active state
+document.addEventListener('DOMContentLoaded', function() {
+    // Set Products as default active
+    document.querySelector('.nav-link[data-category="all"]').classList.add('active');
+    // ... rest of your initialization
+});
 
 
 // When page loads
@@ -1862,27 +2157,95 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Search functionality
         document.getElementById('search-button').addEventListener('click', function() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            
-            productCards.forEach(card => {
-                const productName = card.querySelector('.product-title').textContent.toLowerCase();
-                if (searchTerm === '' || productName.startsWith(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-            
-            // Reset category buttons
-            categoryButtons.forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.category-btn[data-category="all"]').classList.add('active');
-        });
+    const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+    
+    // Get current active category
+    const activeCategory = document.querySelector('.category-btn.active').dataset.category;
 
-        // Prevent form submission on enter
-        document.getElementById('search-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            document.getElementById('search-button').click();
-        });
+
+    document.getElementById('search-button').addEventListener('click', function() {
+    const searchInput = document.getElementById('search-input');
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    
+    // Minimum 2 characters requirement
+    if (searchTerm.length > 0 && searchTerm.length < 2) {
+        searchInput.classList.add('search-too-short');
+        setTimeout(() => {
+            searchInput.classList.remove('search-too-short');
+        }, 1000);
+        return;
+    }
+});
+    
+    // If empty search, just refresh current category view
+    if (!searchTerm) {
+        filterProducts(activeCategory);
+        return;
+    }
+    
+    let foundCategory = null;
+    let foundItems = 0;
+    
+    productCards.forEach(card => {
+        const productName = card.querySelector('.product-title').textContent.toLowerCase();
+        const productCategory = card.dataset.category;
+        
+        if (productName.includes(searchTerm)) {
+            card.style.display = 'block';
+            foundItems++;
+            foundCategory = productCategory; // Remember last matching category
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Hide banner when searching
+    const banner = document.querySelector('.sliding-banner');
+    if (banner) banner.style.display = 'none';
+
+
+    if (foundItems === 0) {
+        const searchInput = document.getElementById('search-input');
+        searchInput.classList.add('search-no-results');
+        setTimeout(() => {
+            searchInput.classList.remove('search-no-results');
+        }, 500);
+        
+        filterProducts(currentCategory);
+        return;
+    }
+    
+    // Activate appropriate category
+    if (foundCategory) {
+        categoryButtons.forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.category-btn[data-category="${foundCategory}"]`).classList.add('active');
+        
+        navLinks.forEach(link => link.classList.remove('active'));
+        document.querySelector(`.nav-link[data-category="${foundCategory}"]`).classList.add('active');
+    }
+    
+    // Scroll to first matching product
+    if (foundItems > 0) {
+        const firstMatch = document.querySelector('.product-card[style*="display: block"]');
+        firstMatch?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+        alert('No products found matching your search');
+    }
+});
+
+document.getElementById('search-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const searchInput = document.getElementById('search-input');
+    
+    // Check minimum length before searching
+    if (searchInput.value.trim().length > 0 && searchInput.value.trim().length < 2) {
+        searchInput.classList.add('search-too-short');
+        setTimeout(() => searchInput.classList.remove('search-too-short'), 1000);
+        return;
+    }
+    
+    document.getElementById('search-button').click();
+});
 
         // Cart functionality
         document.getElementById('open-cart').addEventListener('click', function() {
@@ -1892,15 +2255,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
 
-document.getElementById('blingo-logo').addEventListener('click', function(e) {
+        document.getElementById('blingo-logo').addEventListener('click', function(e) {
     e.preventDefault();
-    // Reset category filter to 'all'
+    
+    // Reset to all category
     categoryButtons.forEach(btn => btn.classList.remove('active'));
     document.querySelector('.category-btn[data-category="all"]').classList.add('active');
+    
+    // Reset nav link
+    navLinks.forEach(link => link.classList.remove('active'));
+    document.querySelector('.nav-link[data-category="all"]').classList.add('active');
+    
+    // Clear search and show all products
+    document.getElementById('search-input').value = '';
     filterProducts('all');
     
-    // Reset search
-    document.getElementById('search-input').value = '';
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
         
@@ -2245,32 +2616,47 @@ setInterval(checkForForceLogout, 5000); // Check every 5 seconds
         });
 
         // Apply coupon code
-        document.getElementById('apply-coupon').addEventListener('click', function() {
-            const couponCode = document.getElementById('coupon-code').value.trim().toUpperCase();
+        // Update coupon application
+document.getElementById('apply-checkout-coupon')?.addEventListener('click', function() {
+    const couponCode = document.getElementById('checkout-coupon-code').value.trim().toUpperCase();
+    const messageEl = document.getElementById('coupon-message');
     
-            // List of valid coupon codes
-            const validCoupons = ['DINGO', 'WELCOME', 'LUXE'];
+    // List of valid coupons
+    const validCoupons = {
+        'DINGO': 0.1,    // 10% off
+        'WELCOME': 0.2,  // 20% off
+        'LUXE': 0.35     // 35% off
+    };
+    
+    if (couponCode in validCoupons) {
+        const discountPercentage = validCoupons[couponCode];
+        discountAmount = calculateSubtotal() * discountPercentage;
+        discountApplied = true;
         
-            if (validCoupons.includes(couponCode)) {
-                let discountPercentage = 0;
-            
-                // Set discount percentage based on coupon code
-                if (couponCode === 'DINGO') discountPercentage = 0.01;
-                if (couponCode === 'WELCOME') discountPercentage = 0.2;
-                if (couponCode === 'LUXE') discountPercentage = 0.35;
-            
-                discountAmount = calculateSubtotal() * discountPercentage;
-                discountApplied = true;
-                document.getElementById('discount-row').style.display = 'flex';
-                document.getElementById('cart-discount').textContent = '-$' + discountAmount.toFixed(2);
-                updateCartTotals();
-            
-                // Show confirmation
-                alert(`Coupon applied successfully! ${(discountPercentage*100).toFixed(0)}% discount added.`);
-            } else {
-                alert('Invalid coupon code. Please try again. Use A Valid Code Next Time!');
-            }
-        });
+        // Update UI
+        document.getElementById('checkout-discount-row').style.display = 'flex';
+        document.getElementById('checkout-discount').textContent = '-$' + discountAmount.toFixed(2);
+        updateCheckoutTotals();
+        
+        // Show success message
+        messageEl.textContent = `Coupon applied! ${(discountPercentage*100).toFixed(0)}% discount added.`;
+        messageEl.className = 'coupon-message success';
+    } else {
+        // Show error message
+        messageEl.textContent = 'Invalid coupon code. Try DINGO, WELCOME, or LUXE';
+        messageEl.className = 'coupon-message error';
+    }
+});
+
+// Add this helper function
+function updateCheckoutTotals() {
+    const subtotal = calculateSubtotal();
+    const shipping = 5; // Fixed shipping cost
+    const total = subtotal + shipping - (discountApplied ? discountAmount : 0);
+    
+    document.getElementById('checkout-subtotal').textContent = '$' + subtotal.toFixed(2);
+    document.getElementById('checkout-total').textContent = '$' + total.toFixed(2);
+}
 
         // Logout functionality
         document.getElementById('logout-btn').addEventListener('click', function() {
@@ -2298,6 +2684,59 @@ setInterval(checkForForceLogout, 5000); // Check every 5 seconds
                 }
             });
         });
+
+        // Make banner clickable (add to your existing script)
+// Make banner clickable with correct product
+function setupBannerClicks() {
+    const bannerSlides = document.querySelectorAll('.banner-slide');
+
+    
+    
+    bannerSlides.forEach(slide => {
+        slide.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            const productName = this.dataset.productName;
+            const productPrice = parseFloat(this.dataset.productPrice);
+            const productImg = this.dataset.productImg;
+
+            // At start of banner click handler
+if (!productId || !productName) {
+    console.error("Missing product data in banner slide");
+    return;
+}
+            
+            // Clear cart and add THIS product
+            cartItems = [{
+                id: productId,
+                name: productName,
+                price: productPrice,
+                img: productImg,
+                quantity: 1
+            }];
+            
+            updateCartCount();
+            
+            // Update checkout display immediately
+            updateCheckoutDisplay();
+            
+            // Go to checkout
+            document.getElementById('shop-page').classList.add('hidden');
+            document.getElementById('checkout-page').classList.remove('hidden');
+            
+            // Ensure correct image shows in checkout
+            const checkoutItemImg = document.querySelector('.checkout-item-image img');
+            if (checkoutItemImg) {
+                checkoutItemImg.src = productImg;
+                checkoutItemImg.alt = productName;
+            }
+        });
+    });
+}
+
+// Call this in your initialization
+document.addEventListener('DOMContentLoaded', function() {
+    setupBannerClicks();
+});
 
         // Cart functions
         function addToCart(id, name, price, img) {
@@ -2427,24 +2866,24 @@ setInterval(checkForForceLogout, 5000); // Check every 5 seconds
         }
 
         function updateCheckoutDisplay() {
-            const checkoutItemsContainer = document.getElementById('checkout-items');
-            checkoutItemsContainer.innerHTML = '';
-            
-            cartItems.forEach(item => {
-                const checkoutItemElement = document.createElement('div');
-                checkoutItemElement.className = 'checkout-item';
-                checkoutItemElement.innerHTML = `
-                    <div class="checkout-item-image">
-                        <img src="${item.img}" alt="${item.name}">
-                    </div>
-                    <div class="checkout-item-details">
-                        <h3 class="checkout-item-title">${item.name}</h3>
-                        <div class="checkout-item-price">$${item.price.toFixed(2)}</div>
-                        <div class="checkout-item-quantity">Qty: ${item.quantity}</div>
-                    </div>
-                `;
-                checkoutItemsContainer.appendChild(checkoutItemElement);
-            });
+    const checkoutItemsContainer = document.getElementById('checkout-items');
+    checkoutItemsContainer.innerHTML = '';
+    
+    cartItems.forEach(item => {
+        const checkoutItemElement = document.createElement('div');
+        checkoutItemElement.className = 'checkout-item';
+        checkoutItemElement.innerHTML = `
+            <div class="checkout-item-image">
+                <img src="${item.img}" alt="${item.name}">
+            </div>
+            <div class="checkout-item-details">
+                <h3 class="checkout-item-title">${item.name}</h3>
+                <div class="checkout-item-price">$${item.price.toFixed(2)}</div>
+                <div class="checkout-item-quantity">Qty: ${item.quantity}</div>
+            </div>
+        `;
+        checkoutItemsContainer.appendChild(checkoutItemElement);
+    });
             
             const subtotal = calculateSubtotal();
             const shipping = cartItems.length > 0 ? 5 : 0;
