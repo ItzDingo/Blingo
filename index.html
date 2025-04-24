@@ -1746,14 +1746,7 @@ body.search-active .sliding-banner {
                             <span id="checkout-total">$0.00</span>
 
                             
-                            <div class="checkout-coupon">
-                                <h3>Apply Discount Code</h3>
-                                <div class="coupon-form">
-                                    <input type="text" id="checkout-coupon-code" placeholder="Enter coupon code">
-                                    <button id="apply-checkout-coupon">Apply</button>
-                                </div>
-                                <div id="coupon-message" class="coupon-message"></div>
-                            </div>
+                            
 
                         </div>
                     </div>
@@ -1831,7 +1824,7 @@ body.search-active .sliding-banner {
         // User authentication
         let currentUser = null;
 const validUsers = [
-    { email: "admin@example.com", username: "admin", password: "admin1", isAdmin: true },
+    { email: "admin@example.com", username: "admin", password: "admin", isAdmin: true },
     { email: "user@example.com", username: "user", password: "user1234", isAdmin: false }
 ];
 let userSessions = []; // Track all active sessions
