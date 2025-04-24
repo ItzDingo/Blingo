@@ -13,10 +13,10 @@
         }
 
         body {
-            background-color: #f5f5f5;
-            color: #333;
-        }
-
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -148,6 +148,46 @@
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+
+/* Updated Sliding Banner Styles */
+.sliding-banner {
+    width: calc(100% - 40px); /* Match product grid padding */
+    max-width: 1200px; /* Match container width */
+    height: 300px;
+    margin: 0 auto 40px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px; /* Same as product cards */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08); /* Identical shadow */
+    border: 1px solid rgba(0, 0, 0, 0.05); /* Subtle border like products */
+    transition: all 0.3s ease; /* Same transition */
+}
+
+.sliding-banner:hover {
+    transform: translateY(-2px); /* Same hover lift */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15); /* Same hover shadow */
+}
+
+/* Ensure images fill the rounded container */
+.banner-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px; /* Match parent radius */
+}
+
+/* Caption styling to match your aesthetic */
+.banner-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+    padding: 20px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 .header-content {
@@ -895,6 +935,7 @@
     margin: 0 0 40px 0; /* Reduced top margin */
     border-radius: 0; /* Full width */
     box-shadow: none; /* Cleaner look */
+    border: 1px solid #eee;
 }
 
 /* Add space between banner and products */
@@ -905,11 +946,11 @@
 
 
         /* Minimal Footer Styles */
-.site-footer {
+        .site-footer {
+    margin-top: auto;
     background-color: #2c3e50;
     color: #ecf0f1;
-    padding: 20px 0;
-    margin-top: 40px;
+    padding: 10px ;
     font-size: 0.9rem;
 }
 
@@ -1748,21 +1789,24 @@ function updateUIAfterLogin(user) {
         const navLinks = document.querySelectorAll('.nav-link');
 
         // Modify category filtering to handle banner visibility
-function filterProducts(category) {
-    // Product cards filtering (keep existing)
+        function filterProducts(category) {
     productCards.forEach(card => {
-        if (category === 'all' || card.dataset.category === category) {
-            card.style.display = 'block';
+        if (category === 'all') {
+            // Show all except packs
+            card.style.display = card.dataset.category === 'packs' ? 'none' : 'block';
+        } else if (category === 'packs') {
+            // Show only packs
+            card.style.display = card.dataset.category === 'packs' ? 'block' : 'none';
         } else {
-            card.style.display = 'none';
+            // Normal category filtering
+            card.style.display = card.dataset.category === category ? 'block' : 'none';
         }
     });
-    
-    // Handle banner visibility
+
+    // Banner visibility (only shows for 'all' category)
     const banner = document.querySelector('.sliding-banner');
     if (banner) {
-        const showCategories = banner.dataset.showCategories.split(',');
-        banner.style.display = showCategories.includes(category) ? 'block' : 'none';
+        banner.style.display = category === 'all' ? 'block' : 'none';
     }
 }
 
@@ -2073,6 +2117,21 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
         document.getElementById('login-error').textContent = 'Invalid email/username or password';
     }
 });
+
+
+// Add mouseenter/mouseleave effects to match products
+const banner = document.querySelector('.sliding-banner');
+if (banner) {
+    banner.addEventListener('mouseenter', () => {
+        banner.style.transform = 'translateY(-5px)';
+        banner.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.15)';
+    });
+    
+    banner.addEventListener('mouseleave', () => {
+        banner.style.transform = 'translateY(0)';
+        banner.style.boxShadow = '0 3px 10px rgba(0, 0, 0, 0.08)';
+    });
+}
 
 // Check periodically for forced logout
 setInterval(checkForForceLogout, 5000); // Check every 5 seconds
