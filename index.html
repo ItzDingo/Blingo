@@ -32,6 +32,33 @@
             z-index: 100;
         }
 
+
+#admin-controls-container {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    z-index: 1000;
+}
+
+#admin-controls {
+    position: relative;
+    left: var(--admin-adjust);
+    transition: all 0.3s ease;
+}
+
+/* Adjust button styling */
+#force-logout-all {
+    padding: 8px 15px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+}
+
+#force-logout-all:hover {
+    background-color: #e53935 !important;
+    transform: translateY(-2px);
+}
+
         .header-content {
             display: flex;
             justify-content: space-between;
@@ -891,7 +918,7 @@
                     <div id="user-greeting" class="user-greeting hidden">
                         Hello, <span id="username-display"></span>
                     </div>
-                    <nav class="adjustable-nav" style="--nav-adjust: -30px;">
+                    <nav class="adjustable-nav" style="--nav-adjust: 0px;">
     <ul>
         <li><a href="#" class="nav-link" data-category="all">Products</a></li>
         <li><a href="#" class="nav-link" data-category="packs">Packs</a></li>
@@ -902,6 +929,17 @@
                             <input type="text" id="search-input" placeholder="Search products...">
                             <button type="button" id="search-button"><i class="fas fa-search"></i></button>
                         </form>
+
+<!-- Add this anywhere in your header (not inside other button containers) -->
+<div id="admin-controls-container" style="position: absolute; right: -200px; top: 15px; z-index: 1000;">
+    <div id="admin-controls" class="hidden" style="--admin-adjust: 0px;">
+        <button id="force-logout-all" class="btn" style="background-color: #ff5252;">
+            <i class="fas fa-user-slash"></i> Logout All Users
+        </button>
+    </div>
+</div>
+
+
                         <div class="user-controls">
                             <button id="logout-btn" class="btn-logout hidden">
                                 <i class="fas fa-sign-out-alt"></i>
@@ -1377,31 +1415,55 @@
         let discountApplied = false;
 
         // User authentication
-        const validUsers = [
-            { email: "admin@example.com", username: "admin", password: "admin123" }
-        ];
         let currentUser = null;
+const validUsers = [
+    { email: "admin@example.com", username: "admin", password: "admin123", isAdmin: true },
+    { email: "user@example.com", username: "user", password: "user123", isAdmin: false }
+];
+let userSessions = []; // Track all active sessions
 
         // Check if user is logged in from localStorage
-        function checkLoggedIn() {
-            const loggedInUser = localStorage.getItem('loggedInUser');
-            if (loggedInUser) {
-                const user = JSON.parse(loggedInUser);
-                const validUser = validUsers.find(u => 
-                    (u.email === user.email || u.username === user.username) && 
-                    u.password === user.password
-                );
+function checkLoggedIn() {
+    const loggedInUser = localStorage.getItem('loggedInUser') || sessionStorage.getItem('loggedInUser');
+    
+    if (loggedInUser) {
+        try {
+            const session = JSON.parse(loggedInUser);
+            const user = validUsers.find(u => 
+                (u.email === session.user.email || u.username === session.user.username) && 
+                u.password === session.user.password
+            );
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('logout-btn').classList.remove('hidden');
+                document.getElementById('user-greeting').classList.remove('hidden');
+                document.getElementById('username-display').textContent = user.username || user.email.split('@')[0];
                 
-                if (validUser) {
-                    currentUser = validUser;
-                    document.getElementById('logout-btn').classList.remove('hidden');
-                    document.getElementById('user-greeting').classList.remove('hidden');
-                    document.getElementById('username-display').textContent = validUser.username || validUser.email.split('@')[0];
-                    loginPage.classList.add('hidden');
-                    shopPage.classList.remove('hidden');
+                if (user.isAdmin) {
+                    document.getElementById('admin-controls').classList.remove('hidden');
                 }
+                
+                document.getElementById('login-page').classList.add('hidden');
+                document.getElementById('shop-page').classList.remove('hidden');
+                
+                userSessions = userSessions.filter(s => s.id !== session.id);
+                userSessions.push({
+                    id: session.id,
+                    user: user,
+                    timestamp: new Date()
+                });
+                
+                // Save user data when returning
+                saveUserData();
             }
+        } catch (e) {
+            console.error("Error parsing user data:", e);
+            localStorage.removeItem('loggedInUser');
+            sessionStorage.removeItem('loggedInUser');
         }
+    }
+}
 
         // DOM Elements
         const loginPage = document.getElementById('login-page');
@@ -1425,37 +1487,64 @@
         });
 
         // Form Submissions
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const emailOrUsername = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const stayLoggedIn = document.getElementById('stay-logged-in').checked;
-            
-            // Validate user
-            const user = validUsers.find(u => 
-                (u.email === emailOrUsername || u.username === emailOrUsername) && 
-                u.password === password
-            );
-            
-            if (user) {
-                currentUser = user;
-                document.getElementById('logout-btn').classList.remove('hidden');
-                document.getElementById('user-greeting').classList.remove('hidden');
-                document.getElementById('username-display').textContent = user.username || user.email.split('@')[0];
-                document.getElementById('login-error').textContent = '';
-                
-                if (stayLoggedIn) {
-                    localStorage.setItem('loggedInUser', JSON.stringify(user));
-                } else {
-                    sessionStorage.setItem('loggedInUser', JSON.stringify(user));
-                }
-                
-                loginPage.classList.add('hidden');
-                shopPage.classList.remove('hidden');
-            } else {
-                document.getElementById('login-error').textContent = 'Invalid email/username or password';
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const emailOrUsername = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const stayLoggedIn = document.getElementById('stay-logged-in').checked;
+
+    const user = validUsers.find(u => 
+        (u.email === emailOrUsername || u.username === emailOrUsername) && 
+        u.password === password
+    );
+
+    if (user) {
+        const sessionId = Date.now().toString();
+        const sessionData = {
+            id: sessionId,
+            user: {
+                email: user.email,
+                username: user.username,
+                password: user.password
             }
+        };
+
+        if (stayLoggedIn) {
+            localStorage.setItem('loggedInUser', JSON.stringify(sessionData));
+        } else {
+            sessionStorage.setItem('loggedInUser', JSON.stringify(sessionData));
+        }
+
+        currentUser = user;
+        userSessions.push({
+            id: sessionId,
+            user: user,
+            timestamp: new Date()
         });
+
+        // Save user data when they log in
+        saveUserData();
+        
+        updateUIAfterLogin(user);
+    } else {
+        document.getElementById('login-error').textContent = 'Invalid email/username or password';
+    }
+});
+
+function updateUIAfterLogin(user) {
+    document.getElementById('logout-btn').classList.remove('hidden');
+    document.getElementById('user-greeting').classList.remove('hidden');
+    document.getElementById('username-display').textContent = user.username || user.email.split('@')[0];
+    document.getElementById('login-error').textContent = '';
+    
+    // Show admin controls if admin
+    if (user.isAdmin) {
+        document.getElementById('admin-controls').classList.remove('hidden');
+    }
+    
+    document.getElementById('login-page').classList.add('hidden');
+    document.getElementById('shop-page').classList.remove('hidden');
+}
 
         document.getElementById('register-form').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -1555,6 +1644,122 @@ document.getElementById('blingo-logo').addEventListener('click', function(e) {
             cartPage.classList.add('hidden');
             shopPage.classList.remove('hidden');
         });
+
+
+        // Force logout all users
+document.getElementById('force-logout-all').addEventListener('click', function() {
+    if (confirm("Are you sure you want to log out all users?")) {
+        // Clear all sessions
+        userSessions = [];
+        
+        // Broadcast logout (in a real app, you'd use websockets)
+        localStorage.setItem('forceLogout', Date.now().toString());
+        
+        // Logout current user too
+        performLogout();
+    }
+});
+
+// Check for forced logout
+function checkForForceLogout() {
+    const forceLogout = localStorage.getItem('forceLogout');
+    if (forceLogout && currentUser) {
+        localStorage.removeItem('forceLogout');
+        performLogout();
+        alert("All users have been logged out by admin.");
+    }
+}
+
+
+// User data collection
+function collectUserData() {
+    // Get basic browser info
+    const userAgent = navigator.userAgent;
+    const platform = navigator.platform;
+    const language = navigator.language;
+    
+    // Get screen resolution
+    const screenResolution = `${window.screen.width}x${window.screen.height}`;
+    
+    // Get timezone
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    
+    // Get current date/time
+    const timestamp = new Date().toISOString();
+    
+    // Get IP address (this will only work if you have a backend service)
+    // Note: This requires a backend API to get the real IP
+    let ipAddress = "Not available (frontend only)";
+    
+    // Get current page URL
+    const pageUrl = window.location.href;
+    
+    // Get cookies (this will only show cookies accessible to JavaScript)
+    const cookies = document.cookie;
+    
+    // Create user data object
+    const userData = {
+        timestamp,
+        userAgent,
+        platform,
+        language,
+        screenResolution,
+        timezone,
+        ipAddress,
+        pageUrl,
+        cookies,
+        currentUser: currentUser ? {
+            username: currentUser.username,
+            email: currentUser.email,
+            isAdmin: currentUser.isAdmin
+        } : null
+    };
+    
+    return userData;
+}
+
+function saveUserData() {
+    const userData = collectUserData();
+    
+    // In a real application, you would send this to a server
+    // For this demo, we'll store it in localStorage and simulate saving to a file
+    
+    // Create a unique filename
+    const filename = `userdata_${Date.now()}.json`;
+    
+    // Convert to JSON
+    const jsonData = JSON.stringify(userData, null, 2);
+    
+    // Store in localStorage (for demonstration)
+    localStorage.setItem(filename, jsonData);
+    
+    // In a real app, you would send this to your server:
+    console.log("Simulating save to Data folder:", filename, userData);
+    
+    // For demonstration, we'll also log it
+    console.log("User data collected:", userData);
+}
+
+
+// Perform logout
+function performLogout() {
+    if (currentUser) {
+        userSessions = userSessions.filter(s => s.user.email !== currentUser.email);
+    }
+    currentUser = null;
+    localStorage.removeItem('currentSession');
+    sessionStorage.removeItem('currentSession');
+    
+    // Reset UI
+    document.getElementById('logout-btn').classList.add('hidden');
+    document.getElementById('user-greeting').classList.add('hidden');
+    document.getElementById('admin-controls').classList.add('hidden');
+    document.getElementById('shop-page').classList.add('hidden');
+    document.getElementById('login-page').classList.remove('hidden');
+}
+
+// Check periodically for forced logout
+setInterval(checkForForceLogout, 5000); // Check every 5 seconds
 
         document.getElementById('continue-shopping').addEventListener('click', function() {
             cartPage.classList.add('hidden');
@@ -1744,6 +1949,25 @@ document.getElementById('blingo-logo').addEventListener('click', function(e) {
         function calculateSubtotal() {
             return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
         }
+
+
+        function updateCredentials(oldEmail, newUserData) {
+    // Find and update user
+    const userIndex = validUsers.findIndex(u => u.email === oldEmail);
+    if (userIndex > -1) {
+        validUsers[userIndex] = newUserData;
+        
+        // Logout all sessions for this user
+        userSessions = userSessions.filter(s => s.user.email !== oldEmail);
+        localStorage.setItem('forceLogout', Date.now().toString());
+        
+        return true;
+    }
+    return false;
+}
+
+// Example usage (call this when admin changes credentials):
+// updateCredentials("old@email.com", {email: "new@email.com", password: "newpass", isAdmin: true});
 
         function updateCartTotals() {
             const subtotal = calculateSubtotal();
